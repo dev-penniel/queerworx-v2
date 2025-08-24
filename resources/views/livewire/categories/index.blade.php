@@ -178,8 +178,9 @@ new class extends Component {
             </div>
         </div>
 
-        <table class="table-auto w-full">
-            <thead>
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full">
+                <thead>
                 <th>
                     <tr class="bg-gray-100">
                         <td class="px-5 py-3 font-bold text-sm">Name</td>
@@ -191,8 +192,8 @@ new class extends Component {
                         
                     </tr>
                 </th>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
 
                 @foreach ($this->categories as $category)
                 
@@ -220,8 +221,10 @@ new class extends Component {
 
                 @endforeach
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+        
 
         <div class="mt-5">
 

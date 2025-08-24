@@ -35,6 +35,13 @@ Route::middleware(['auth'])->group(function(){
      
 });
 
+Route::middleware(['auth'])->group(function(){
+
+    Volt::route('articles/index', 'articles.index')->name('articles.index');
+    Volt::route('articles/create', 'articles.create')->name('articles.create');
+     
+});
+
 Route::middleware(['auth', 'role:General Admin|Manager'])->group(function(){
 
     Volt::route('users/index', 'users.index')->name('users.index');

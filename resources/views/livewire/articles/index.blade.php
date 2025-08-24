@@ -1,0 +1,121 @@
+<?php
+
+use Livewire\Volt\Component;
+use App\Models\Article;
+use Livewire\Attributes\On;
+use Livewire\WithPagination;
+use Livewire\Attributes\Url;
+
+new class extends Component {
+
+    use WithPagination;
+
+    public $search;
+
+    #[On('article-deleted')]
+    public function getArticlesProperty()
+    {
+        return Article::when($this->search, function ($query){
+            $query->where('title', 'like', '%'.$this->search.'%');
+        })->latest()->paginate(50);
+    }
+
+    public function deleteArticle($id)
+    {
+        $article = Article::findOrFail($id);
+        $article->delete();
+        $this->dispatch('article-deleted');
+
+        $article->categories()
+    }
+
+}; ?>
+
+<div>
+    
+    <div class="relative mb-6 w-full">
+        <div class="flex justify-between items-center">
+            <div>
+                <flux:heading size="xl" level="1">{{ __('Articles') }}</flux:heading>
+                <flux:breadcrumbs class="mb-4 mt-2">
+                    <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item >Articles</flux:breadcrumbs.item>
+                </flux:breadcrumbs>
+            </div>
+        </div>
+        <flux:separator variant="subtle" />
+    </div>
+
+    <div>
+
+        <div class="flex justify-between items-center mb-5">
+
+            <a wire:navigate href="{{ route('articles.create') }}"><flux:button class="cursor-pointer">Add</flux:button></a>
+            
+
+            <div class="w-[200px]">
+                <flux:input
+                    wire:model.live="search"
+                    type="text"
+                    required
+                    placeholder="Search"
+                    autocomplete="current-password"
+                />
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full">
+                <thead>
+                    <th>
+                        <tr class="bg-gray-100">
+                            <td class="px-5 py-3 font-bold text-sm">Thubmnail</td>
+                            <td class="px-5 py-3 font-bold text-sm">Title</td>
+                            <td class="px-5 py-3 font-bold text-sm">Slug</td>
+                            <td class="px-5 py-3 font-bold text-sm">Status</td>
+                            <td class="px-5 py-3 font-bold text-sm">Categories</td>
+                            <td class="px-5 py-3 font-bold text-sm">Views</td>
+                            <td class="px-5 py-3 font-bold text-sm">Claps</td>
+                            <td class="px-5 py-3 font-bold text-sm">Published</td>
+                            <td class="px-5 py-3 font-bold text-sm">Created</td>
+                            <td class="px-5 py-3 font-bold text-sm">Actions</td>
+                        </tr>
+                    </th>
+                </thead>
+                <tbody>
+                    @foreach ($this->articles as $article)
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->slug }}</td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->status }}</td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">
+                            @foreach ($article->categories as $category)
+                                <flux:badge size="sm">{{ $category->name }}</flux:badge>
+                            @endforeach
+                        </td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->views }}</td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->claps }}</td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->created_at->format('M d, Y H:i') }}</td>
+                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->updated_at->format('M d, Y H:i') }}</td>
+                        <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
+                                
+                                    <flux:modal.trigger wire:click="edit({{ $article->id }})" name="update-category">
+                                        <flux:icon.pencil-square class="size-5 cursor-pointer" color="green" />
+                                    </flux:modal.trigger>
+                                
+                                    <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteArticle({{ $article->id }})" wire:confirm="Are you sure you want to delete?" />
+
+                            </td>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-5">
+
+            {{-- {{ $this->products->links() }} --}}
+
+        </div>
+
+    </div>
+</div>
