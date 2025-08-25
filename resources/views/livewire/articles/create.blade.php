@@ -28,8 +28,6 @@ new class extends Component {
             'title' => 'required|string|max:255',
             'body' => 'required',
             'exerpt' => 'required|string|max:100',
-            'views' => 'nullable',
-            'claps' => 'nullable',
             'thumbnail' => 'nullable|image|max:2048',
             'imgCredit' => 'nullable',
             'status' => 'string',
@@ -42,8 +40,8 @@ new class extends Component {
             'slug' => $this->slug,
             'body' => $validated['body'],
             'exerpt' => $validated['exerpt'],
-            'views' => $validated['views'],
-            'claps' => $validated['claps'],
+            'views' => 0,
+            'claps' => 0,
             'img_credit' => $validated['imgCredit'],
             'status' => $validated['status'],
             'published_date' => $this->publishedDate,
@@ -51,7 +49,6 @@ new class extends Component {
 
         $article->categories()->sync($categoryIds);
 
-        $this->reset();
 
         $this->dispatch('article-created');
 
@@ -88,7 +85,57 @@ new class extends Component {
                 autocomplete="title"
             />
 
-            <div class="pb-5" x-data="quillEditor()" x-init="initQuill()">
+            <div class="pb-5" x-data="{
+                quill: null,
+                content: @entangle('body'), // Livewire property
+
+                initQuill() {
+                    // Initialize Quill editor
+                    this.quill = new Quill('#editor-container', {
+                        theme: 'snow',
+                        placeholder: 'Compose an epic...',
+                        modules: {
+                            toolbar: [
+                                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                                ['blockquote', 'code-block'],
+                                ['link', 'image', 'video'],
+
+                                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                                [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                                [{ 'align': [] }],
+
+                                ['clean']                                         // remove formatting button
+                            ]
+                        }
+                    });
+
+                    // Set initial content if it exists
+                    if (this.content) {
+                        this.quill.root.innerHTML = this.content;
+                    }
+
+                    // Update Alpine model when Quill content changes
+                    this.quill.on('text-change', () => {
+                        this.content = this.quill.root.innerHTML;
+                    });
+
+                    // Watch for external content changes (like Livewire updates)
+                    this.$watch('content', (value) => {
+                        if (this.quill.root.innerHTML !== value) {
+                            this.quill.root.innerHTML = value;
+                        }
+                    });
+                },
+
+                updateContent() {
+                    // This method is triggered by the hidden input
+                    // The debounce modifier helps prevent excessive updates
+                    this.content = this.quill.root.innerHTML;
+                }
+            }" x-init="initQuill()">
                 <!-- Quill editor container -->
                 <div id="editor-container" style="height: 200px;"></div>
                 <!-- Hidden input to bind with Livewire -->
@@ -141,7 +188,48 @@ new class extends Component {
 
             </select> --}}
 
-            <div x-data="searchableDropdown" class="relative w-80">
+            {{-- Searchable multi select --}}
+            <div x-data="{
+                isOpen: false,
+                query: '',
+                selectedOptions: @entangle('selectedCategories'),
+                options: @js($categories),
+                allOptions: @js($categories),
+
+                get filteredOptions(){
+                    return this.options.filter(option =>
+                        option.name.toLowerCase().includes(this.query.toLowerCase()) &&
+                        !this.selectedOptions.includes(option.id)
+                    );
+                },
+                toggleDropDown(){
+                    this.isOpen = !this.isOpen;
+                },
+                closeDropDown(){
+                    this.isOpen = false;
+                },
+                removeSelectedFromOptions(){
+                    this.options = this.options.filter(option =>
+                        !this.selectedOptions.some(([id]) => id === option.id)
+                    );
+                },
+                removeFromSelected(option){
+                    this.selectedOptions = this.selectedOptions.filter(id => id !== option);
+                    this.resetOptions(option);
+                    
+                },
+                selectOption(option){
+                    this.selectedOptions.push([option.id, option.name]);
+                    this.query = '';
+                    this.closeDropDown();
+                    this.removeSelectedFromOptions();
+                },
+                resetOptions(option) {
+                    this.options = this.allOptions.filter(option => 
+                        !this.selectedOptions.some(([id]) => id === option.id)
+                    );
+                }
+            }" class="relative w-80">
 
                 <label class="block mb-2 text-gray-700 font-medium" for="option">Select Option</label>
 
@@ -207,8 +295,6 @@ new class extends Component {
                     {{ __('Saved.') }}
                 </x-action-message>
             </div>
-
-            {!! $body !!}
             
         </div>
 
@@ -219,109 +305,3 @@ new class extends Component {
 <!-- Include the Quill library -->
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
-<!-- Initialize Quill editor -->
-<script>
-
-    document.addEventListener('alpine:init', () => {
-
-        // Text Editor
-        const toolbarOptions = [
-        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-        ['blockquote', 'code-block'],
-        ['link', 'image', 'video'],
-
-        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
-        [{ 'align': [] }],
-
-        ['clean']                                         // remove formatting button
-        ];
-
-        //   Searchable multi select
-        Alpine.data('quillEditor', () => ({
-            quill: null,
-            content: @entangle('body'), // Livewire property
-
-            initQuill() {
-                // Initialize Quill editor
-                this.quill = new Quill('#editor-container', {
-                    theme: 'snow',
-                    placeholder: 'Compose an epic...',
-                    modules: {
-                        toolbar: toolbarOptions
-                    }
-                });
-
-                // Set initial content if it exists
-                if (this.content) {
-                    this.quill.root.innerHTML = this.content;
-                }
-
-                // Update Alpine model when Quill content changes
-                this.quill.on('text-change', () => {
-                    this.content = this.quill.root.innerHTML;
-                });
-
-                // Watch for external content changes (like Livewire updates)
-                this.$watch('content', (value) => {
-                    if (this.quill.root.innerHTML !== value) {
-                        this.quill.root.innerHTML = value;
-                    }
-                });
-            },
-
-            updateContent() {
-                // This method is triggered by the hidden input
-                // The debounce modifier helps prevent excessive updates
-                this.content = this.quill.root.innerHTML;
-            }
-        }));
-
-        Alpine.data('searchableDropdown', () => ({
-
-            isOpen: false,
-            query: '',
-            selectedOptions: @entangle('selectedCategories'),
-            options: @js($categories),
-            allOptions: @js($categories),
-
-            get filteredOptions(){
-                return this.options.filter(option =>
-                    option.name.toLowerCase().includes(this.query.toLowerCase()) &&
-                    !this.selectedOptions.includes(option.id)
-                );
-            },
-            toggleDropDown(){
-                this.isOpen = !this.isOpen;
-            },
-            closeDropDown(){
-                this.isOpen = false;
-            },
-            removeSelectedFromOptions(){
-                this.options = this.options.filter(option =>
-                    !this.selectedOptions.some(([id]) => id === option.id)
-                );
-            },
-            removeFromSelected(option){
-                this.selectedOptions = this.selectedOptions.filter(id => id !== option);
-                this.resetOptions(option);
-                
-            },
-            selectOption(option){
-                this.selectedOptions.push([option.id, option.name]);
-                this.query = '';
-                this.closeDropDown();
-                this.removeSelectedFromOptions();
-            },
-            resetOptions(option) {
-                this.options = this.allOptions.filter(option => 
-                    !this.selectedOptions.some(([id]) => id === option.id)
-                );
-            }
-
-        }));
-    });
-</script>

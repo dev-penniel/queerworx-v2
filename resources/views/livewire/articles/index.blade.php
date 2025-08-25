@@ -25,8 +25,7 @@ new class extends Component {
         $article = Article::findOrFail($id);
         $article->delete();
         $this->dispatch('article-deleted');
-
-        $article->categories()
+;
     }
 
 }; ?>
@@ -84,28 +83,28 @@ new class extends Component {
                 </thead>
                 <tbody>
                     @foreach ($this->articles as $article)
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->slug }}</td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->status }}</td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">
-                            @foreach ($article->categories as $category)
-                                <flux:badge size="sm">{{ $category->name }}</flux:badge>
-                            @endforeach
-                        </td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->views }}</td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->claps }}</td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->created_at->format('M d, Y H:i') }}</td>
-                        <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->updated_at->format('M d, Y H:i') }}</td>
-                        <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
-                                
-                                    <flux:modal.trigger wire:click="edit({{ $article->id }})" name="update-category">
-                                        <flux:icon.pencil-square class="size-5 cursor-pointer" color="green" />
-                                    </flux:modal.trigger>
-                                
-                                    <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteArticle({{ $article->id }})" wire:confirm="Are you sure you want to delete?" />
-
+                        <tr class="border-b border-gray-300 hover:bg-gray-100" >
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->slug }}</td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->status }}</td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">
+                                @foreach ($article->categories as $category)
+                                    <flux:badge size="sm">{{ $category->name }}</flux:badge>
+                                @endforeach
                             </td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->views }}</td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->claps }}</td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->created_at->format('M d, Y H:i') }}</td>
+                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->updated_at->format('M d, Y H:i') }}</td>
+                            <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
+                                    
+                                        <a wire:navigate href="{{ route('users.edit', $article->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                                    
+                                        <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteArticle({{ $article->id }})" wire:confirm="Are you sure you want to delete?" />
+
+                                </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
