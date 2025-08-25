@@ -4,9 +4,11 @@ use Livewire\Volt\Component;
 use App\Models\Category;
 use App\Models\Article;
 
-
 new class extends Component {
     
+    public $id;
+
+    public $article;
 
     public $title, $slug, $exerpt, $body, $thumbnail, $status, $publishedDate, $imgCredit;
 
@@ -14,44 +16,19 @@ new class extends Component {
 
     public $selectedCategories = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->categories = Category::latest()->get(['id', 'name']);
-    }
 
+        $this->article = Article::findOrFail($this->id);
 
-    public function createArticle()
-    {
-        $categoryIds = array_column($this->selectedCategories, 0);
-
-        $validated = $this->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required',
-            'exerpt' => 'required|string|max:100',
-            'thumbnail' => 'nullable|image|max:2048',
-            'imgCredit' => 'nullable',
-            'status' => 'string',
-        ]);
-
-        $this->slug = Str::slug($this->title);
-
-        $article = Article::create([
-            'title' => $validated['title'],
-            'slug' => $this->slug,
-            'body' => $validated['body'],
-            'exerpt' => $validated['exerpt'],
-            'views' => 0,
-            'claps' => 0,
-            'img_credit' => $validated['imgCredit'],
-            'status' => $validated['status'],
-            'published_date' => $this->publishedDate,
-        ]);
-
-        $article->categories()->sync($categoryIds);
-
-
-        $this->dispatch('article-created');
-
+        // populate form with article data
+        $this->title = $this->article->title;
+        $this->exerpt = $this->article->exerpt;
+        $this->body = $this->article->body;
+        $this->status = $this->article->status;
+        $this->publishedDate = $this->article->published_date;
+        $this->imgCredit = $this->article->img_credit;
     }
 
 }; ?>
@@ -60,11 +37,12 @@ new class extends Component {
     <div class="relative mb-6 w-full">
         <div class="flex justify-between items-center">
             <div>
-                <flux:heading size="xl" level="1">{{ __('New Article') }}</flux:heading>
+                <flux:heading size="xl" level="1">Edit Article - {{ $article->title }}</flux:heading>
                 <flux:breadcrumbs class="mb-4 mt-2">
                     <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
                     <flux:breadcrumbs.item >Articles</flux:breadcrumbs.item>
-                    <flux:breadcrumbs.item >New</flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item >{{ $article->title }}</flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item >Edit</flux:breadcrumbs.item>
                 </flux:breadcrumbs>
             </div>
         </div>
@@ -301,7 +279,3 @@ new class extends Component {
     </form>
 
 </div>
-
-<!-- Include the Quill library -->
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-
