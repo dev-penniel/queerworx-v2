@@ -3,9 +3,14 @@
 use Livewire\Volt\Component;
 use App\Models\Category;
 use App\Models\Article;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Storage;
 
 
 new class extends Component {
+
+    use WithFileUploads;
     
 
     public $title, $slug, $exerpt, $body, $thumbnail, $status, $publishedDate, $imgCredit;
@@ -33,7 +38,10 @@ new class extends Component {
             'status' => 'string',
         ]);
 
-        $this->slug = Str::slug($this->title);
+        $this->slug = Str::slug($validated['title']);
+
+        // Handle cover image upload if exists
+        $thumbnailPath = $this->thumbnail->store('images/thumbnails', 'public');
 
         $article = Article::create([
             'title' => $validated['title'],
@@ -45,6 +53,7 @@ new class extends Component {
             'img_credit' => $validated['imgCredit'],
             'status' => $validated['status'],
             'published_date' => $this->publishedDate,
+            'thumbnail' => $thumbnailPath,
         ]);
 
         $article->categories()->sync($categoryIds);
@@ -144,12 +153,44 @@ new class extends Component {
 
             </div>
 
-            <flux:input
-                class="mb-5"
-                wire:model="thumbnail"
-                :label="__('Thumbnail')"
-                type="file"
-            />
+            {{-- Cover Image --}}
+            <div class="space-y-4">
+                <flux:heading size="sm">Thumbnail</flux:heading>
+                <div class="space-y-2">
+                    <div x-data="{ isUploading: false, progress: 0 }" 
+                        x-on:livewire-upload-start="isUploading = true"
+                        x-on:livewire-upload-finish="isUploading = false"
+                        x-on:livewire-upload-error="isUploading = false"
+                        x-on:livewire-upload-progress="progress = $event.detail.progress">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Thumbnail (Max 2MB)</label>
+                        <div class="flex items-center justify-center w-full">
+                            <label class="flex flex-col w-full h-32 border-2 border-dashed rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all">
+                                <div class="flex flex-col items-center justify-center pt-7">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <p class="pt-1 text-sm text-gray-600">Click to upload cover image</p>
+                                </div>
+                                <input type="file" class="opacity-0" wire:model="thumbnail" accept="image/*" />
+                            </label>
+                        </div>
+                        <div x-show="isUploading" class="mt-2">
+                            <progress max="100" x-bind:value="progress" class="w-full"></progress>
+                        </div>
+                        @error('thumbnail') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Cover Image Preview -->
+                    <div wire:loading.remove wire:target="thumbnail">
+                        @if ($thumbnail)
+                            <div class="mt-2">
+                                <span class="block text-sm font-medium text-gray-700 mb-1">Preview:</span>
+                                <img src="{{ $thumbnail->temporaryUrl() }}" class="h-32 w-32 object-cover rounded-md">
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
 
             <flux:input
                 class="mb-5"
@@ -302,5 +343,3 @@ new class extends Component {
 
 </div>
 
-<!-- Include the Quill library -->
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
