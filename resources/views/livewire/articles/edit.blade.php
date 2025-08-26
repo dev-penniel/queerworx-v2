@@ -34,6 +34,43 @@ new class extends Component {
         $this->selectedCategories = $this->article->categories()->get(['categories.id', 'categories.name'])->map(fn ($cat) => [$cat->id, $cat->name])->toArray();
     }
 
+
+    public function updateArticle($id)
+    {
+
+        $article = Article::findOrFail($id);
+
+        $categoryIds = array_column($this->selectedCategories, 0);
+
+        $validated = $this->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required',
+            'exerpt' => 'required|string|max:100',
+            'thumbnail' => 'nullable|image|max:2048',
+            'imgCredit' => 'nullable',
+            'status' => 'string',
+        ]);
+
+        $this->slug = Str::slug($validated['title']);
+
+         $article->update([
+            'title' => $validated['title'],
+            'slug' => $this->slug,
+            'body' => $validated['body'],
+            'exerpt' => $validated['exerpt'],
+            'views' => 0,
+            'claps' => 0,
+            'img_credit' => $validated['imgCredit'],
+            'status' => $validated['status'],
+            'published_date' => $this->publishedDate,
+        ]);
+
+        $article->categories()->sync($categoryIds);
+
+
+        $this->dispatch('article-updated');
+    }
+
 }; ?>
 
 <div>
@@ -52,7 +89,7 @@ new class extends Component {
         <flux:separator variant="subtle" />
     </div>
 
-    <form wire:submit="createArticle" >
+    <form wire:submit="updateArticle({{ $id }})" >
 
         <div>
 
@@ -272,7 +309,7 @@ new class extends Component {
                     <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
                 </div>
     
-                <x-action-message class="me-3" on="article-created">
+                <x-action-message class="me-3" on="article-updated">
                     {{ __('Saved.') }}
                 </x-action-message>
             </div>
