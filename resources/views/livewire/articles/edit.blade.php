@@ -29,6 +29,9 @@ new class extends Component {
         $this->status = $this->article->status;
         $this->publishedDate = $this->article->published_date;
         $this->imgCredit = $this->article->img_credit;
+
+        // Mearge Categories
+        $this->selectedCategories = $this->article->categories()->get(['categories.id', 'categories.name'])->map(fn ($cat) => [$cat->id, $cat->name])->toArray();
     }
 
 }; ?>
@@ -177,7 +180,7 @@ new class extends Component {
                 get filteredOptions(){
                     return this.options.filter(option =>
                         option.name.toLowerCase().includes(this.query.toLowerCase()) &&
-                        !this.selectedOptions.includes(option.id)
+                        !this.selectedOptions.some(([id]) => id === option.id)
                     );
                 },
                 toggleDropDown(){

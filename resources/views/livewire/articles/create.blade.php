@@ -199,7 +199,7 @@ new class extends Component {
                 get filteredOptions(){
                     return this.options.filter(option =>
                         option.name.toLowerCase().includes(this.query.toLowerCase()) &&
-                        !this.selectedOptions.includes(option.id)
+                        !this.selectedOptions.some(([id]) => id === option.id)
                     );
                 },
                 toggleDropDown(){
@@ -304,4 +304,3 @@ new class extends Component {
 
 <!-- Include the Quill library -->
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-
