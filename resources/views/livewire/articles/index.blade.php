@@ -23,7 +23,13 @@ new class extends Component {
     public function deleteArticle($id)
     {
         $article = Article::findOrFail($id);
+
+        // Remove article category relationship from pivoit table
+        $article->categories()->detach();
+
+        // delete article
         $article->delete();
+
         $this->dispatch('article-deleted');
 ;
     }
