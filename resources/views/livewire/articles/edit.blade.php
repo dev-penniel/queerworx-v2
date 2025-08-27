@@ -3,14 +3,19 @@
 use Livewire\Volt\Component;
 use App\Models\Category;
 use App\Models\Article;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Storage;
 
 new class extends Component {
+
+    use WithFileUploads;
     
     public $id;
 
     public $article;
 
-    public $title, $slug, $exerpt, $body, $thumbnail, $status, $publishedDate, $imgCredit;
+    public $title, $slug, $exerpt, $body, $thumbnail, $currentThumbnail, $thumbnailToRemove, $status, $publishedDate, $imgCredit;
 
     public $categories = [];
 
@@ -29,6 +34,7 @@ new class extends Component {
         $this->status = $this->article->status;
         $this->publishedDate = $this->article->published_date;
         $this->imgCredit = $this->article->img_credit;
+        $this->currentThumbnail = $this->article->thumbnail;
 
         // Mearge Categories
         $this->selectedCategories = $this->article->categories()->get(['categories.id', 'categories.name'])->map(fn ($cat) => [$cat->id, $cat->name])->toArray();
@@ -53,6 +59,26 @@ new class extends Component {
 
         $this->slug = Str::slug($validated['title']);
 
+        // Handle cover image upload if exists
+        $thumbnailPath = $this->currentThumbnail;
+
+        if ($this->thumbnail) {
+            
+            // Delete old cover image if exists
+            if ($this->currentThumbnail) {
+                Storage::disk('public')->delete($this->currentThumbnail);
+            }
+
+            $thumbnailPath = $this->thumbnail->store('images/thumbnails', 'public');
+
+        } elseif ($this->currentThumbnail === null) {
+
+            Storage::disk('public')->delete($this->thumbnailToRemove);
+
+            // Cover image was removed
+            $thumbnailPath = null;
+        }
+
          $article->update([
             'title' => $validated['title'],
             'slug' => $this->slug,
@@ -63,12 +89,21 @@ new class extends Component {
             'img_credit' => $validated['imgCredit'],
             'status' => $validated['status'],
             'published_date' => $this->publishedDate,
+            'thumbnail' => $thumbnailPath,
         ]);
 
         $article->categories()->sync($categoryIds);
 
 
         $this->dispatch('article-updated');
+    }
+
+    // remove cover image
+    public function removeCoverImage()
+    {
+        $this->thumbnailToRemove = $this->currentThumbnail;
+        $this->currentThumbnail = null;
+        $this->thumbnail = null;
     }
 
 }; ?>
@@ -162,12 +197,65 @@ new class extends Component {
 
             </div>
 
-            <flux:input
-                class="mb-5"
-                wire:model="thumbnail"
-                :label="__('Thumbnail')"
-                type="file"
-            />
+            {{-- Cover Image --}}
+            <div class="space-y-4">
+                <flux:heading size="sm">Thumbnail</flux:heading>
+                <div class="space-y-2">
+                    <div x-data="{ isUploading: false, progress: 0 }" 
+                        x-on:livewire-upload-start="isUploading = true"
+                        x-on:livewire-upload-finish="isUploading = false"
+                        x-on:livewire-upload-error="isUploading = false"
+                        x-on:livewire-upload-progress="progress = $event.detail.progress">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Thumbnail (Max 2MB)</label>
+                        <div class="flex items-center justify-center w-full">
+                            <label class="flex flex-col w-full h-32 border-2 border-dashed rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all">
+                                <div class="flex flex-col items-center justify-center pt-7">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <p class="pt-1 text-sm text-gray-600">Click to upload cover image</p>
+                                </div>
+                                <input type="file" class="opacity-0" wire:model="thumbnail" accept="image/*" />
+                            </label>
+                        </div>
+                        <div x-show="isUploading" class="mt-2">
+                            <progress max="100" x-bind:value="progress" class="w-full"></progress>
+                        </div>
+                        @error('thumbnail') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Cover Image Preview -->
+                    <div wire:loading.remove wire:target="thumbnail">
+                        @if ($thumbnail)
+                            <div class="mt-2">
+                                <span class="block text-sm font-medium text-gray-700 mb-1">Preview:</span>
+                                <img src="{{ $thumbnail->temporaryUrl() }}" class="h-32 w-32 object-cover rounded-md">
+                            </div>
+                            <button type="button" wire:click="removeCoverImage" 
+                                    class="mt-2 text-sm text-red-600 hover:text-red-800 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Remove Current Image
+                            </button>
+                        @endif
+                    </div>
+
+                    @if ($thumbnail == null && $currentThumbnail !== null)
+                        <div class="mt-2">
+                            <span class="block text-sm font-medium text-gray-700 mb-1">Current Cover Image:</span>
+                            <img src="{{ Storage::url($currentThumbnail)}}" class="h-32 w-32 object-cover rounded-md">
+                            <button type="button" wire:click="removeCoverImage" 
+                                    class="mt-2 text-sm text-red-600 hover:text-red-800 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Remove Current Image
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
 
             <flux:input
                 class="mb-5"
