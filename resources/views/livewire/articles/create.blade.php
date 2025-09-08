@@ -40,8 +40,12 @@ new class extends Component {
 
         $this->slug = Str::slug($validated['title']);
 
-        // Handle cover image upload if exists
-        $thumbnailPath = $this->thumbnail->store('images/thumbnails', 'public');
+        $thumbnailPath = null;
+
+        if($this->thumbnail){
+            // Handle cover image upload if exists
+            $thumbnailPath = $this->thumbnail->store('images/thumbnails', 'public');
+        }
 
         $article = Article::create([
             'title' => $validated['title'],
