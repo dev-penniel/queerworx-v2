@@ -126,6 +126,20 @@ new class extends Component {
 
     <form wire:submit="updateArticle({{ $id }})" >
 
+        {{-- Demo Grid --}}
+
+        <div class='grid grid-cols-3 gap-10'>
+
+            <div class='col-span-2 h-5 bg-black'>
+
+            </div>
+
+            <div class='col-span-1 h-5 bg-black'>
+
+            </div>
+
+        </div>
+
         <div>
 
             <flux:input

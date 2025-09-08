@@ -82,7 +82,7 @@ new class extends Component {
 
     <form wire:submit="createArticle" >
 
-        {{-- Demo Grid --}}
+        {{-- Demo Grid
 
         <div class='grid grid-cols-3 gap-10'>
 
@@ -94,7 +94,7 @@ new class extends Component {
 
             </div>
 
-        </div>
+        </div> --}}
 
 
         <div class='grid grid-cols-3 gap-10'>
@@ -168,6 +168,7 @@ new class extends Component {
                 </div>
 
                 <flux:textarea
+                    class="mb-5"
                     wire:model="exerpt"
                     :label="__('Exerpt')"
                     type="text"
@@ -204,11 +205,10 @@ new class extends Component {
 
 
 
-            <div class='col-span-1'>
+            <div class='col-span-1 '>
                 
                 {{-- Cover Image --}}
-                <div class="space-y-4">
-                    <flux:heading size="sm">Thumbnail</flux:heading>
+                <div class="space-y-4 mb-5">
                     <div class="space-y-2">
                         <div x-data="{ isUploading: false, progress: 0 }" 
                             x-on:livewire-upload-start="isUploading = true"
@@ -310,7 +310,7 @@ new class extends Component {
                             !this.selectedOptions.some(([id]) => id === option.id)
                         );
                     }
-                }" class="relative w-80">
+                }" class="relative w-80 mb-5">
 
                     <label class="block mb-2 text-gray-700 font-medium" for="option">Select Option</label>
 
