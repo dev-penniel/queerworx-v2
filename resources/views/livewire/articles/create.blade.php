@@ -242,7 +242,7 @@ new class extends Component {
                             @if ($thumbnail)
                                 <div class="mt-2">
                                     <span class="block text-sm font-medium text-gray-700 mb-1">Preview:</span>
-                                    <img src="{{ $thumbnail->temporaryUrl() }}" class="h-32 w-32 object-cover rounded-md">
+                                    <img src="{{ $thumbnail->temporaryUrl() }}" class="h-40 w-full object-cover rounded-md">
                                 </div>
                             @endif
                         </div>
@@ -314,7 +314,7 @@ new class extends Component {
                             !this.selectedOptions.some(([id]) => id === option.id)
                         );
                     }
-                }" class="relative w-full mb-5">
+                }" class=" w-full mb-5">
 
                     <label class="block mb-2 text-gray-700 font-medium" for="option">Select Option</label>
 
@@ -338,7 +338,7 @@ new class extends Component {
                     </div>
 
                     <!-- Drop Down Options -->
-                    <div x-show="isOpen" @click.away="closeDropDown" class="absolute z-10 bg-white shadow-lg rounded-lg mt-2 w-full border border-gray-200"> 
+                    <div x-show="isOpen" @click.away="closeDropDown" class="absolute top-0 max-w-[320px] max-h-[90vh] overflow-scroll z-10 bg-white shadow-lg rounded-lg mt-2 w-full border border-gray-200"> 
 
                         <!-- Input Search -->
                         <div class="p-2">
