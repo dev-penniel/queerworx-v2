@@ -70,7 +70,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    <div class="relative mb-6 w-full">
+    <div class="relative mb-6 w-full max-w-6xl lg:mx-auto">
         <div class="flex justify-between items-center">
             <div>
                 <flux:heading size="xl" level="1">{{ __('New Article') }}</flux:heading>
@@ -101,7 +101,7 @@ new class extends Component {
         </div> --}}
 
 
-        <div class='grid grid-cols-3 gap-10'>
+        <div class='grid grid-cols-3 gap-10 max-w-6xl lg:mx-auto'>
 
             <div class='col-span-2'>
                 <flux:input
@@ -314,18 +314,23 @@ new class extends Component {
                             !this.selectedOptions.some(([id]) => id === option.id)
                         );
                     }
-                }" class="relative w-80 mb-5">
+                }" class="relative w-full mb-5">
 
                     <label class="block mb-2 text-gray-700 font-medium" for="option">Select Option</label>
 
-                    <div class="flex gap-4">
+                    <div class="flex gap-2 flex-wrap cursor-pointer">
                         <template x-for="(selectedOption, index) in selectedOptions" :key="index">
-                            <p @click="removeFromSelected(selectedOption)" x-text="selectedOption[1]"></p>
+                            <flux:badge size="sm">
+                                <div @click="removeFromSelected(selectedOption)" class="flex">
+                                    <p x-text="selectedOption[1]"></p> <flux:badge.close class="cursor-pointer" />
+                                </div>
+                            </flux:badge>
+                            
                         </template>
                     </div>
 
                     <!-- Selected options -->
-                    <div @click="toggleDropDown" class="border border-gray rounded-lg px-4 py-2 flex justify-between items-center cursor-pointer focus:ring focus:ring-blue-200">
+                    <div @click="toggleDropDown" class="mt-4 border border-gray rounded-lg px-4 py-2 flex justify-between items-center cursor-pointer focus:ring focus:ring-blue-200">
                         <span x-text="'Choose an option'"></span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
