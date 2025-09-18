@@ -163,9 +163,13 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
+            @can("category-create")
                 <flux:modal.trigger name="create-category">
                     <flux:button class="cursor-pointer">Add</flux:button>
                 </flux:modal.trigger>
+            @endcan
+
+                
 
             <div class="w-[200px]">
                 <flux:input
@@ -202,20 +206,23 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm">{{ $category->slug }}</td>
                         <td class="px-5 py-2 text-sm">{{ $category->created_at->format('M d, Y H:i') }}</td>
                         <td class="px-5 py-2 text-sm">{{ $category->updated_at->format('M d, Y H:i') }}</td>
-
                         
                             
                             <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                                 
-                                    <flux:modal.trigger wire:click="edit({{ $category->id }})" name="update-category">
-                                        <flux:icon.pencil-square class="size-5 cursor-pointer" color="green" />
-                                    </flux:modal.trigger>
-                                
-                                    <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteCategory({{ $category->id }})" wire:confirm="Are you sure you want to delete?" />
-                                    {{-- <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="$js.showAlert({{ $product->id }})" /> --}}
+                                    @can("category-edit")
+                                        <flux:modal.trigger wire:click="edit({{ $category->id }})" name="update-category">
+                                            <flux:icon.pencil-square class="size-5 cursor-pointer" color="green" />
+                                        </flux:modal.trigger>
+                                    @endcan
+
+                                    @can("category-delete")
+                                        <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteCategory({{ $category->id }})" wire:confirm="Are you sure you want to delete?" />
+                                        {{-- <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="$js.showAlert({{ $product->id }})" /> --}}
+                                    @endcan
+                                    
 
                             </td>
-
                         
                     </tr>
 
