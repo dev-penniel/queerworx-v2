@@ -114,7 +114,7 @@ new class extends Component {
                     autocomplete="title"
                 />
 
-                <div class="pb-5" x-data="{
+                <div wire:ignore class="pb-5" x-data="{
                     quill: null,
                     content: @entangle('body'), // Livewire property
 
@@ -274,7 +274,7 @@ new class extends Component {
                 </select> --}}
 
                 {{-- Searchable multi select --}}
-                <div x-data="{
+                <div wire:ignore x-data="{
                     isOpen: false,
                     query: '',
                     selectedOptions: @entangle('selectedCategories'),
