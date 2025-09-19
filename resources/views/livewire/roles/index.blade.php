@@ -41,7 +41,10 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            <a wire:navigate href="{{ route('roles.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+            @can("role-create")
+                <a wire:navigate href="{{ route('roles.create') }}"><flux:button class="cursor-pointer">Add</flux:button></a>
+                
+            @endcan
 
             <disv class="w-[200px]">
                 <flux:input
@@ -62,7 +65,9 @@ new class extends Component {
                         {{-- <td class="px-5 py-3 font-bold text-sm">Email</td>
                         <td class="px-5 py-3 font-bold text-sm">Created</td>
                         <td class="px-5 py-3 font-bold text-sm">Updated</td> --}}
-                        <td class="px-5 py-3 font-bold text-sm">Actions</td>
+                        @canany(['role-edit', 'role-delete'])
+                            <td class="px-5 py-3 font-bold text-sm">Actions</td>
+                        @endcanany
                     </tr>
                 </th>
             </thead>
@@ -84,14 +89,25 @@ new class extends Component {
                         {{-- <td class="px-5 py-2 text-sm">{{ $role->email }}</td>
                         <td class="px-5 py-2 text-sm">{{ $role->created_at }}</td>
                         <td class="px-5 py-2 text-sm">{{ $role->updated_at }}</td> --}}
-                        <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
-                            
-                            <a wire:navigate href="{{ route('roles.edit', $role->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
-                            
-                            <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteRole({{ $role->id }})" wire:confirm.prompt="Deleting Roles is not advised, are you sure you want to continue?\n\nType YES to confirm|YES"  />
 
+                        @canany(['role-edit', 'role-delete'])
+
+                            <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
+                                
+                                @can('role-edit')
+                                    <a wire:navigate href="{{ route('roles.edit', $role->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                                    
+                                @endcan
+                                
+                                @can('role-delete')
+                                    <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteRole({{ $role->id }})" wire:confirm.prompt="Deleting Roles is not advised, are you sure you want to continue?\n\nType YES to confirm|YES"  />
+                                    
+                                @endcan
 
                             </td>
+
+                        @endcanany
+                        
                     </tr>
 
                 @endforeach

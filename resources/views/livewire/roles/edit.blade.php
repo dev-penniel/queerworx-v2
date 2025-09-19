@@ -55,7 +55,7 @@ new class extends Component {
                     </div>
                     <flux:breadcrumbs class="mb-4 mt-2">
                         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
-                        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Roles</flux:breadcrumbs.item>
+                        <flux:breadcrumbs.item href="{{ route('roles.index') }}">Roles</flux:breadcrumbs.item>
                         <flux:breadcrumbs.item >Edit</flux:breadcrumbs.item>
                         <flux:breadcrumbs.item >{{ $name }}</flux:breadcrumbs.item>
                     </flux:breadcrumbs>
@@ -78,9 +78,15 @@ new class extends Component {
                 
             </div>
 
-            <div class="space-x-2">
+            <div class="space-x-2 flex gap-2 flex-wrap mb-8">
                 @foreach ($permissions as $permission )
-                    <label for="" ><input wire:model="selectedPermissions" value="{{ $permission->name }}" type="checkbox"> {{ $permission->name }}</label>
+                    {{-- <label for="" ><input wire:model="selectedPermissions" value="{{ $permission->name }}" type="checkbox"> {{ $permission->name }}</label> --}}
+
+                    <flux:field variant="inline">
+                        <flux:checkbox value="{{ $permission->name }}" wire:model="selectedPermissions" />
+                        <flux:label>{{ $permission->name }}</flux:label>
+                        <flux:error name="selectedPermissions" />
+                    </flux:field>
                 @endforeach
             </div>
 

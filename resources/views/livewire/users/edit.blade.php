@@ -68,7 +68,7 @@ new class extends Component {
                     </div>
                     <flux:breadcrumbs class="mb-4 mt-2">
                         <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
-                        <flux:breadcrumbs.item href="{{ route('dashboard') }}">users</flux:breadcrumbs.item>
+                        <flux:breadcrumbs.item href="{{ route('users.index') }}">users</flux:breadcrumbs.item>
                         <flux:breadcrumbs.item >Create</flux:breadcrumbs.item>
                     </flux:breadcrumbs>
                 </div>

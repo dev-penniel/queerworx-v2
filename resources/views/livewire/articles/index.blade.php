@@ -55,8 +55,9 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
 
-            <a wire:navigate href="{{ route('articles.create') }}"><flux:button class="cursor-pointer">Add</flux:button></a>
-            
+            @can("article-create")
+                <a wire:navigate href="{{ route('articles.create') }}"><flux:button class="cursor-pointer">Add</flux:button></a>
+            @endcan            
 
             <div class="w-[200px]">
                 <flux:input
@@ -83,7 +84,11 @@ new class extends Component {
                             <td class="px-5 py-3 font-bold text-sm">Claps</td>
                             <td class="px-5 py-3 font-bold text-sm">Published</td>
                             <td class="px-5 py-3 font-bold text-sm">Created</td>
-                            <td class="px-5 py-3 font-bold text-sm">Actions</td>
+
+                            @canany(['article-edit', 'article-delete'])
+                                <td class="px-5 py-3 font-bold text-sm">Actions</td>
+                            @endcanany
+
                         </tr>
                     </th>
                 </thead>
@@ -109,13 +114,23 @@ new class extends Component {
                             <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->claps }}</td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->created_at->format('M d, Y H:i') }}</td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->updated_at->format('M d, Y H:i') }}</td>
-                            <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
-                                    
-                                        <a wire:navigate href="{{ route('articles.edit', $article->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
-                                    
-                                        <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteArticle({{ $article->id }})" wire:confirm="Are you sure you want to delete?" />
 
+                            @canany(['article-edit', 'article-delete'])
+
+                                <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
+                                        
+                                    @can("article-edit")
+                                        <a wire:navigate href="{{ route('articles.edit', $article->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                                    @endcan
+
+                                    @can("article-delete")
+                                        <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteArticle({{ $article->id }})" wire:confirm="Are you sure you want to delete?" />
+                                    @endcan
+                                        
                                 </td>
+                                
+                            @endcanany
+
                         </tr>
                     @endforeach
                 </tbody>

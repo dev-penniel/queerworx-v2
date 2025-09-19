@@ -32,7 +32,7 @@ new class extends Component {
 }; ?>
 
 
-
+ 
 <div>
     <div class="relative mb-6 w-full">
         <div class="flex justify-between items-center">
@@ -50,7 +50,10 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            <a wire:navigate href="{{ route('users.create') }}"><flux:button size="sm" variant="primary" class="btn-sm"> <flux:icon.plus class="size-5" /> Add New</flux:button></a>
+            @can('user-create')
+                <a wire:navigate href="{{ route('users.create') }}"><flux:button class="cursor-pointer">Add</flux:button></a>
+                
+            @endcan
 
             <div class="w-[200px]">
                 <flux:input
@@ -71,7 +74,11 @@ new class extends Component {
                         <td class="px-5 py-3 font-bold text-sm">Email</td>
                         <td class="px-5 py-3 font-bold text-sm">Role</td>
                         <td class="px-5 py-3 font-bold text-sm">Created</td>
-                        <td class="px-5 py-3 font-bold text-sm">Actions</td>
+
+                        @canany(['user-edit', 'user-delete'])
+                            <td class="px-5 py-3 font-bold text-sm">Actions</td>
+                        @endcanany
+
                     </tr>
                 </th>
             </thead>
@@ -88,18 +95,23 @@ new class extends Component {
                         @endforeach
 
                         <td class="px-5 py-2 text-sm">{{ $user->created_at->format('M d, Y H:i') }}</td>
-                        <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
-                            
-                            @can('user-edit')
-                                <a wire:navigate href="{{ route('users.edit', $user->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
-                            @endcan
-                            
-                            @can('user-delete')
-                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteUser({{ $user->id }})" wire:confirm="Are you sure you want to delete?" />
-                            @endcan
+
+                        @canany(['user-edit', 'user-delete'])
+
+                            <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
+                                
+                                @can('user-edit')
+                                    <a wire:navigate href="{{ route('users.edit', $user->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                                @endcan
+                                
+                                @can('user-delete')
+                                    <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteUser({{ $user->id }})" wire:confirm="Are you sure you want to delete?" />
+                                @endcan
 
 
                             </td>
+                        @endcanany
+
                     </tr>
 
                 @endforeach

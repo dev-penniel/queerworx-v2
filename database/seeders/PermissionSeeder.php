@@ -18,10 +18,14 @@ class PermissionSeeder extends Seeder
         // Create permissions
 
         $permissions = [
-            'category-list',
-            'category-create',
-            'category-edit',
-            'category-delete',
+            'article-list',
+            'article-create',
+            'article-edit',
+            'article-delete',
+            // 'category-list',
+            // 'category-create',
+            // 'category-edit',
+            // 'category-delete',
             // 'role-list',
             // 'role-create',
             // 'role-edit',

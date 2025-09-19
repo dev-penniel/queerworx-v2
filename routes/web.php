@@ -29,17 +29,17 @@ Route::middleware(['auth'])->group(function(){
 
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:category-list'])->group(function(){
 
     Volt::route('categories/index', 'categories.index')->name('categories.index');
      
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:article-list'])->group(function(){
 
     Volt::route('articles/index', 'articles.index')->name('articles.index');
     Volt::route('articles/create', 'articles.create')->name('articles.create');
-    Volt::route('articles/{id}/edit', 'articles.edit')->name('articles.edit');
+    Volt::route('articles/{slug}/edit', 'articles.edit')->name('articles.edit');
      
 });
 
