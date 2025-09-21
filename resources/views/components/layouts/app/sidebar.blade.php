@@ -10,7 +10,7 @@
 
             <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
                 {{-- <x-app-logo /> --}}
-                <h2 class="font-bold">Penniel Starter Kit</h2>
+                <h2 class="font-bold">Penniel Blog</h2>
             </a>
 
             <flux:navlist variant="outline">

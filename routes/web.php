@@ -3,9 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Route::get('/', function () {
+//     return view('frontend');
+// })->name('home');
+
+Volt::route('/', 'welcome')->name('home');
+Volt::route('article/{slug}', 'article')->name('article');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -18,8 +21,6 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
-
-
 
 Route::middleware(['auth'])->group(function(){
 
@@ -39,11 +40,11 @@ Route::middleware(['auth', 'permission:article-list'])->group(function(){
 
     Volt::route('articles/index', 'articles.index')->name('articles.index');
     Volt::route('articles/create', 'articles.create')->name('articles.create');
-    Volt::route('articles/{slug}/edit', 'articles.edit')->name('articles.edit');
+    Volt::route('articles/{id}/edit', 'articles.edit')->name('articles.edit');
      
 });
 
-Route::middleware(['auth', 'role:General Admin|Manager'])->group(function(){
+Route::middleware(['auth', 'permission:user-list'])->group(function(){
 
     Volt::route('users/index', 'users.index')->name('users.index');
     Volt::route('users/create', 'users.create')->name('users.create');
@@ -51,7 +52,7 @@ Route::middleware(['auth', 'role:General Admin|Manager'])->group(function(){
 
 });
 
-Route::middleware(['auth', 'role:General Admin'])->group(function(){
+Route::middleware(['auth', 'permission:role-list'])->group(function(){
 
     Volt::route('roles/index', 'roles.index')->name('roles.index');
     Volt::route('roles/create', 'roles.create')->name('roles.create');
