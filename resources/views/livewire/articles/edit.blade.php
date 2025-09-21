@@ -123,7 +123,7 @@ new class extends Component {
         </div>
         <flux:separator variant="subtle" />
     </div>
-    <form wire:submit="updateArticle({{ $id }})" >
+    <form class="relative" wire:submit="updateArticle({{ $id }})" >
 
         {{-- Demo Grid
 
@@ -253,7 +253,7 @@ new class extends Component {
             <div class='col-span-1 sticky top-5'>
                 
                 {{-- Cover Image --}}
-                <div class="space-y-4 mb-5">
+                <div class="space-y-4 mb-5 ">
                     <div class="space-y-2">
                         <div x-data="{ isUploading: false, progress: 0 }" 
                             x-on:livewire-upload-start="isUploading = true"

@@ -16,7 +16,10 @@ class extends Component {
 
     public function mount($slug)
     {
+        
         $this->article = Article::with('categories')->where('slug', $slug)->firstOrFail();
+
+        $this->article->increment('views');
 
         $this->previousArticle = Article::where('id', '<', $this->article->id)
             ->where('status', '=', 'published')
@@ -33,6 +36,7 @@ class extends Component {
         $this->relatedArticles = Article::whereHas('categories', function ($q) use ($categoryIds) {
                 $q->whereIn('categories.id', $categoryIds);
             })
+            ->where('status', '=', 'published')
             ->where('id', '!=', $this->article->id)
             ->latest()
             ->take(3)
@@ -47,18 +51,36 @@ class extends Component {
     <div class="lg:col-span-2">
         {{-- Thumbnail --}}
         @if($article->thumbnail)
-            <img src="{{ Storage::url($article->thumbnail) }}" 
-                 class="w-full h-96 object-cover rounded-2xl shadow mb-6">
+            <img alt="{{ $article->img_credit }}" src="{{ Storage::url($article->thumbnail) }}" 
+                 class="w-full h-96 object-cover rounded-2xl shadow mb-2">
+
+                 <p class="text-gray-500 mb-4 text-sm ml-5">Image by {{ $article->img_credit }}</p>
         @endif
 
         {{-- Title --}}
         <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $article->title }}</h1>
 
         {{-- Meta --}}
-        <p class="text-sm text-gray-500 mb-8">
-            Published {{ $article->created_at->format('M d, Y') }}
-            • {{ $article->categories->pluck('name')->join(', ') }}
-        </p>
+        <div class="flex gap-5 mb-8">
+            <p class="text-sm text-gray-500">
+                Published {{ $article->created_at->format('M d, Y') }}
+                • {{ $article->categories->pluck('name')->join(', ') }}
+            </p>
+
+            <div class="flex items-center justify-between text-sm text-gray-500">
+                {{-- <span>{{ $article->published_date->format('M d, Y') }}</span> --}}
+                <div class="flex items-center space-x-4">
+                    <span class="flex items-center">
+                        <svg class="w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        {{ $article->views }}
+                    </span>
+                    <livewire:like id="{{ $article->id }}" />
+                </div>
+            </div>
+        </div>
 
         {{-- Body --}}
         <div class="prose prose-lg max-w-none mb-10">
