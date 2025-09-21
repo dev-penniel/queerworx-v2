@@ -156,12 +156,16 @@ class extends Component {
     {{-- Sidebar --}}
     <div class="space-y-8">
         {{-- About --}}
-        <div class="bg-white rounded-2xl shadow p-6 sticky top-5">
-            <h2 class="text-xl font-semibold mb-4">About</h2>
-            <p class="text-gray-600">
-                Welcome to our blog where we share stories, tutorials, and insights.  
-                Stay tuned for more fresh content.
-            </p>
+        <div class="sticky top-5">
+            <div class="bg-white rounded-2xl shadow p-6 ">
+                <h2 class="text-xl font-semibold mb-4">About</h2>
+                <p class="text-gray-600">
+                    Welcome to our blog where we share stories, tutorials, and insights.  
+                    Stay tuned for more fresh content.
+                </p>
+            </div>
+
+            <livewire:share-article id="{{ $article->id }}" />
         </div>
 
         {{-- Social Links --}}
