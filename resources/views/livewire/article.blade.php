@@ -19,10 +19,12 @@ class extends Component {
         $this->article = Article::with('categories')->where('slug', $slug)->firstOrFail();
 
         $this->previousArticle = Article::where('id', '<', $this->article->id)
+            ->where('status', '=', 'published')
             ->orderBy('id', 'desc')
             ->first();
 
         $this->nextArticle = Article::where('id', '>', $this->article->id)
+            ->where('status', '=', 'published')
             ->orderBy('id', 'asc')
             ->first();
 

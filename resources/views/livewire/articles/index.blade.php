@@ -77,7 +77,6 @@ new class extends Component {
                         <tr class="bg-gray-100">
                             <td class="px-5 py-3 font-bold text-sm">Thubmnail</td>
                             <td class="px-5 py-3 font-bold text-sm">Title</td>
-                            <td class="px-5 py-3 font-bold text-sm">Slug</td>
                             <td class="px-5 py-3 font-bold text-sm">Status</td>
                             <td class="px-5 py-3 font-bold text-sm">Categories</td>
                             <td class="px-5 py-3 font-bold text-sm">Views</td>
@@ -103,7 +102,6 @@ new class extends Component {
                             @endif
                         </td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
-                            <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->slug }}</td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->status }}</td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">
                                 @foreach ($article->categories as $category)
@@ -118,6 +116,10 @@ new class extends Component {
                             @canany(['article-edit', 'article-delete'])
 
                                 <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
+
+                                    @can("article-view")
+                                        <a target="_BLANK" href="{{ route('article', ['slug' => $article->slug]) }}"><flux:icon.eye class="size-5"/></a>
+                                    @endcan
                                         
                                     @can("article-edit")
                                         <a wire:navigate href="{{ route('articles.edit', $article->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>

@@ -109,14 +109,14 @@ new class extends Component {
 }; ?>
 
 <div>
-    <div class="relative mb-6 w-full">
+    <div class="relative mb-6 w-full max-w-6xl lg:mx-auto">
         <div class="flex justify-between items-center">
             <div>
                 <flux:heading size="xl" level="1">Edit Article - {{ $article->title }}</flux:heading>
                 <flux:breadcrumbs class="mb-4 mt-2">
                     <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
-                    <flux:breadcrumbs.item >Articles</flux:breadcrumbs.item>
-                    <flux:breadcrumbs.item >{{ $article->title }}</flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item  href="{{ route('articles.index') }}">Articles</flux:breadcrumbs.item>
+                    <flux:breadcrumbs.item target="_BLANK" href="{{ route('article', ['slug' => $article->slug]) }}" >{{ $article->title }}</flux:breadcrumbs.item>
                     <flux:breadcrumbs.item >Edit</flux:breadcrumbs.item>
                 </flux:breadcrumbs>
             </div>
@@ -205,7 +205,7 @@ new class extends Component {
                     }
                 }" x-init="initQuill()">
                     <!-- Quill editor container -->
-                    <div id="editor-container" style="height: 200px;"></div>
+                    <div id="editor-container"></div>
                     <!-- Hidden input to bind with Livewire -->
                     <input type="hidden" x-model="content" @input.debounce="updateContent">
                 </div>
@@ -242,13 +242,15 @@ new class extends Component {
 
                     </flux:select>
 
+                    
+
                 </div>
 
             </div>
 
 
 
-            <div class='col-span-1 '>
+            <div class='col-span-1 sticky top-5'>
                 
                 {{-- Cover Image --}}
                 <div class="space-y-4 mb-5">
@@ -425,9 +427,13 @@ new class extends Component {
                         <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
                     </div>
         
-                    <x-action-message class="me-3" on="article-created">
+                    <x-action-message class="me-3" on="article-updated">
                         {{ __('Saved.') }}
                     </x-action-message>
+
+                    @can('article-view')
+                        <flux:button  href="{{ route('article', ['slug' => $article->slug]) }}" Target="_BLANK">View Article</flux:button>
+                    @endcan
                 </div>
             </div>
             

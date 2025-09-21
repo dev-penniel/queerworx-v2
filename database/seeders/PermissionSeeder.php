@@ -18,10 +18,11 @@ class PermissionSeeder extends Seeder
         // Create permissions
 
         $permissions = [
-            'article-list',
-            'article-create',
-            'article-edit',
-            'article-delete',
+            // 'article-list',
+            // 'article-create',
+            // 'article-edit',
+            // 'article-delete',
+            // 'article-view',
             // 'category-list',
             // 'category-create',
             // 'category-edit',
@@ -46,8 +47,8 @@ class PermissionSeeder extends Seeder
         }
         
         // create roles and assighn permisisons
-        $role = Role::create(['name' => 'General Admin']);
-        $role->givePermissionTo(Permission::all());
+        // $role = Role::create(['name' => 'General Admin']);
+        // $role->givePermissionTo(Permission::all());
 
     }
 
