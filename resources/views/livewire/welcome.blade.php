@@ -112,7 +112,7 @@ class extends Component {
                         <div class="relative h-48 overflow-hidden">
                             @if($article->thumbnail)
                                 <img 
-                                    src="{{ $article->thumbnail }}" 
+                                    src="{{ Storage::url($article->thumbnail) }}" 
                                     alt="{{ $article->title }}"
                                     class="w-full h-full object-cover"
                                 >
