@@ -29,6 +29,9 @@
                     @endcan
 
                     <flux:navlist.item icon="clipboard-document-list" :href="route('resources.index')" :current="request()->routeIs('resources.index')" wire:navigate>{{ __('Resources') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="clipboard-document-list" :href="route('subscribers.index')" :current="request()->routeIs('subscribers.index')" wire:navigate>{{ __('Subscribers') }}</flux:navlist.item>
+
                     
                 </flux:navlist.group>
                 
