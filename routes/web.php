@@ -37,6 +37,18 @@ Route::middleware(['auth', 'permission:category-list'])->group(function(){
      
 });
 
+Route::middleware(['auth'])->group(function(){
+
+    Volt::route('resources/index', 'resources.index')->name('resources.index');
+     
+});
+
+Route::middleware(['auth'])->group(function(){
+
+    Volt::route('subscribers/index', 'subscribers.index')->name('subscribers.index');
+     
+});
+
 Route::middleware(['auth', 'permission:article-list'])->group(function(){
 
     Volt::route('articles/index', 'articles.index')->name('articles.index');

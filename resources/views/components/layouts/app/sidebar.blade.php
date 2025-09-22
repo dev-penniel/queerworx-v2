@@ -27,6 +27,11 @@
                     @can("category-list")
                         <flux:navlist.item icon="clipboard-document-list" :href="route('categories.index')" :current="request()->routeIs('categories.index')" wire:navigate>{{ __('Categories') }}</flux:navlist.item>
                     @endcan
+
+                    <flux:navlist.item icon="archive-box" :href="route('resources.index')" :current="request()->routeIs('resources.index')" wire:navigate>{{ __('Resources') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="user-group" :href="route('subscribers.index')" :current="request()->routeIs('subscribers.index')" wire:navigate>{{ __('Subscribers') }}</flux:navlist.item>
+
                     
                 </flux:navlist.group>
                 
