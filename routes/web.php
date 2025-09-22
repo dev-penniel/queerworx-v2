@@ -9,6 +9,7 @@ use Livewire\Volt\Volt;
 
 Volt::route('/', 'welcome')->name('home');
 Volt::route('article/{slug}', 'article')->name('article');
+Volt::route('articles', 'articles')->name('articles');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

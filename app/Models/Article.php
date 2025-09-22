@@ -25,6 +25,11 @@ class Article extends Model
         'published_date',
     ];
 
+    protected $casts = [
+        'created_at' =>  'date',
+        'published_at' => 'date',
+    ];
+
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
