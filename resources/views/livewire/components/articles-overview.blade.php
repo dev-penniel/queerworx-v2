@@ -21,23 +21,45 @@ class extends Component {
         $this->categories = Category::latest()->get();
     }
 
+    // public function loadArticles()
+    // {
+    //     $query = Article::where('status', 'published')
+    //                 ->orderBy('published_date', 'desc');
+
+    //     if ($this->selectedCategory) {
+    //         $query->where('categories', $this->selectedCategory);
+    //     }
+
+    //     if ($this->search) {
+    //         $query->where(function($q) {
+    //             $q->where('title', 'like', '%' . $this->search . '%')
+    //               ->orWhere('body', 'like', '%' . $this->search . '%');
+    //         });
+    //     }
+
+    //     $this->articles = $query->get();
+    // }
+
     public function loadArticles()
     {
         $query = Article::where('status', 'published')
                     ->orderBy('published_date', 'desc');
 
         if ($this->selectedCategory) {
-            $query->where('categories', $this->selectedCategory);
+            // Assuming `categories` is a relationship, use whereHas instead of direct column filter
+            $query->whereHas('categories', function ($q) {
+                $q->where('categories.id', $this->selectedCategory);
+            });
         }
 
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('title', 'like', '%' . $this->search . '%')
-                  ->orWhere('body', 'like', '%' . $this->search . '%');
+                ->orWhere('body', 'like', '%' . $this->search . '%');
             });
         }
 
-        $this->articles = $query->get();
+        $this->articles = $query->take(3)->get();
     }
 
     public function updatedSelectedCategory()
@@ -75,29 +97,6 @@ class extends Component {
         </div>
     </section>
 
-    <!-- Filters -->
-    {{-- <section class="py-8 bg-gray-800">
-        <div class="container mx-auto px-4 max-w-7xl">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <!-- Category Filter -->
-                <select wire:model="selectedCategory" class="bg-gray-900 border border-gray-700 text-gray-200 rounded-lg px-4 py-2 focus:outline-none">
-                    <option value="">All Categories</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-
-                <!-- Search -->
-                <input type="text" wire:model.debounce.500ms="search" placeholder="Search articles..." 
-                       class="flex-grow bg-gray-900 border border-gray-700 text-gray-200 rounded-lg px-4 py-2 focus:outline-none">
-
-                <button wire:click="clearFilters" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white transition">
-                    Clear
-                </button>
-            </div>
-        </div>
-    </section> --}}
-
     <!-- Articles Grid -->
     <section class="py-16 bg-gray-900">
         <div class="container mx-auto px-4 max-w-7xl">
@@ -115,8 +114,8 @@ class extends Component {
                             </p>
 
                             <div class="mt-4 flex justify-between items-center text-sm text-gray-400">
-                                <span>{{ $article->created_at->format('M d, Y') }}</span>
-                                <a wire:navigate href="{{ route('article', $article->slug) }}" class="text-purple-400 hover:text-purple-300">
+                                {{-- <span>{{ $article->published_date?->format('M d, Y') }}</span> --}}
+                                <a href="{{ route('article', $article->slug) }}" class="text-purple-400 hover:text-purple-300">
                                     Read More <i class="fas fa-arrow-right ml-1"></i>
                                 </a>
                             </div>

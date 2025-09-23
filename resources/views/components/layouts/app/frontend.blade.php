@@ -42,11 +42,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QueerWorx - LGBTQ+ Community Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        @include('partials.head')
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -87,7 +84,7 @@
 <body class="bg-gray-900 text-gray-200 min-h-screen" x-data="{ mobileMenu: false, darkMode: true }">
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-gray-800 shadow-lg">
-        <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div class="container mx-auto px-8 py-8 max-w-7xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
                     <a href="#" class="flex items-center space-x-2">
@@ -100,8 +97,9 @@
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-8">
-                    <a href="#" class="hover:text-purple-400 transition">Home</a>
+                    <a wire:navigate href="{{ route('home') }}" class="hover:text-purple-400 transition">Home</a>
                     <a href="#" class="hover:text-purple-400 transition">Resources</a>
+                    <a wire:navigate href="{{ route('articles') }}" class="hover:text-purple-400 transition">Xpressions</a>
                     <a href="#" class="hover:text-purple-400 transition">Community</a>
                     <a href="#" class="hover:text-purple-400 transition">Events</a>
                     <a href="#" class="hover:text-purple-400 transition">Support</a>
@@ -137,7 +135,7 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 py-12">
-        <div class="container mx-auto px-4 max-w-7xl">
+        <div class="container mx-auto px-8 max-w-7xl">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center space-x-2">

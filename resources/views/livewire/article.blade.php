@@ -2,7 +2,6 @@
 
 use Livewire\Volt\Component;
 use App\Models\Article;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 
@@ -16,9 +15,9 @@ class extends Component {
 
     public function mount($slug)
     {
-        
         $this->article = Article::with('categories')->where('slug', $slug)->firstOrFail();
 
+        // Increment views
         $this->article->increment('views');
 
         $this->previousArticle = Article::where('id', '<', $this->article->id)
@@ -42,143 +41,129 @@ class extends Component {
             ->take(3)
             ->get();
     }
-}; ?>
 
-<div>
-    <div class="container mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
-    
-    {{-- Article Content --}}
-    <div class="lg:col-span-2">
-        {{-- Thumbnail --}}
-        @if($article->thumbnail)
-            <img alt="{{ $article->img_credit }}" src="{{ Storage::url($article->thumbnail) }}" 
-                 class="w-full h-96 object-cover rounded-2xl shadow mb-2">
+    public function clap()
+    {
+        $this->article->increment('claps');
+        $this->article->refresh();
+    }
+};
+?>
 
-                 <p class="text-gray-500 mb-4 text-sm ml-5">Image by {{ $article->img_credit }}</p>
-        @endif
-
-        {{-- Title --}}
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ $article->title }}</h1>
-
-        {{-- Meta --}}
-        <div class="flex gap-5 mb-8">
-            <p class="text-sm text-gray-500">
-                Published {{ $article->created_at->format('M d, Y') }}
-                • {{ $article->categories->pluck('name')->join(', ') }}
-            </p>
-
-            <div class="flex items-center justify-between text-sm text-gray-500">
-                {{-- <span>{{ $article->published_date->format('M d, Y') }}</span> --}}
-                <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                        <svg class="w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
-                        {{ $article->views }}
-                    </span>
-                    <livewire:like id="{{ $article->id }}" />
+<div class="bg-gray-900 text-gray-200 min-h-screen">
+    <section class="container mx-auto px-4 max-w-6xl py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- Main Content -->
+            <article class="lg:col-span-2">
+                <!-- Thumbnail -->
+                <div class="">
+                    <img src="{{ Storage::url($article->thumbnail) ?? 'https://placehold.co/1200x600/8B5CF6/FFFFFF/png?text=Article' }}" 
+                         alt="{{ $article->title }}" 
+                         class="rounded-2xl w-full object-cover mb-4">
+                    @if($article->img_credit)
+                        <span class="block text-xs ml-8 mb-8 text-gray-400">
+                            Credit: {{ $article->img_credit }}
+                        </span>
+                    @endif
                 </div>
-            </div>
-        </div>
 
-        {{-- Body --}}
-        <div class="prose prose-lg max-w-none mb-10">
-            {!! $article->body !!}
-        </div>
+                <!-- Title -->
+                <h1 class="text-4xl font-bold mb-4">{{ $article->title }}</h1>
+                {{-- <p class="text-gray-400 mb-6">
+                    Published on {{ $article->published_date?->format('M d, Y') }}
+                </p> --}}
 
-        {{-- Previous & Next Navigation --}}
-        <div class="mt-10 border-t pt-6 grid grid-cols-2 gap-6">
+                <div class="flex gap-5">
+                    <p class="text-sm text-gray-500">
+                        Published {{ $article->created_at->format('M d, Y') }}
+                        • {{ $article->categories->pluck('name')->join(', ') }}
+                    </p>
 
-            {{-- Previous --}}
-            @if($previousArticle)
-                <a wire:navigate href="{{ route('article', ['slug' => $previousArticle->slug]) }}" 
-                   class="group flex items-center gap-4 p-4 rounded-xl bg-white shadow hover:shadow-lg transition">
-                    @if($previousArticle->thumbnail)
-                        <img src="{{ Storage::url($previousArticle->thumbnail) }}" 
-                             class="w-20 h-20 object-cover rounded-lg shadow">
-                    @endif
-                    <div>
-                        <p class="text-xs text-gray-500">Previous</p>
-                        <h3 class="text-sm font-semibold group-hover:text-blue-600">
-                            {{ Str::limit($previousArticle->title, 50) }}
-                        </h3>
+                    <!-- Stats -->
+                    <div class="flex items-center gap-6 text-sm text-gray-400 mb-6">
+                        <span><i class="fas fa-eye mr-1"></i> {{ $article->views }} views</span>
+                        <livewire:components.article-clap id="{{ $article->id }}" />
                     </div>
-                </a>
-            @endif
+                </div>
 
-            {{-- Next --}}
-            @if($nextArticle)
-                <a wire:navigate href="{{ route('article', ['slug' => $nextArticle->slug]) }}" 
-                   class="group flex items-center gap-4 p-4 rounded-xl bg-white shadow hover:shadow-lg transition text-right justify-end">
-                    <div>
-                        <p class="text-xs text-gray-500">Next</p>
-                        <h3 class="text-sm font-semibold group-hover:text-blue-600">
-                            {{ Str::limit($nextArticle->title, 50) }}
-                        </h3>
-                    </div>
-                    @if($nextArticle->thumbnail)
-                        <img src="{{ Storage::url($nextArticle->thumbnail) }}" 
-                             class="w-20 h-20 object-cover rounded-lg shadow">
-                    @endif
-                </a>
-            @endif
+                <!-- Body -->
+                <div class="prose prose-invert max-w-none text-gray-400">
+                    {!! $article->body !!}
+                </div>
 
-        </div>
-
-        {{-- Related Articles --}}
-        @if($relatedArticles->count())
-            <div class="mt-16">
-                <h2 class="text-2xl font-semibold mb-6">Related Articles</h2>
-                <div class="grid md:grid-cols-3 gap-6">
-                    @foreach($relatedArticles as $related)
-                        <a wire:navigate href="{{ route('article', ['slug' => $related->slug]) }}" 
-                           class="block bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden">
-                            @if($related->thumbnail)
-                                <img src="{{ Storage::url($related->thumbnail) }}" 
-                                     class="w-full h-40 object-cover">
-                            @endif
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-900 mb-2">
-                                    {{ Str::limit($related->title, 60) }}
-                                </h3>
-                                <p class="text-sm text-gray-500">
-                                    {{ $related->created_at->format('M d, Y') }}
-                                </p>
-                            </div>
+                <!-- Prev / Next Navigation -->
+                <div class="flex justify-between items-center mt-12">
+                    @if($previousArticle)
+                        <a wire:navigate href="{{ route('article', $previousArticle->slug) }}" 
+                           class="flex items-center gap-3 text-purple-400 hover:text-purple-300">
+                            <img src="{{ Storage::url($previousArticle->thumbnail) ?? 'https://placehold.co/100x100/8B5CF6/FFFFFF/png' }}" 
+                                 class="w-16 h-16 rounded-lg object-cover">
+                            <span>← {{ $previousArticle->title }}</span>
                         </a>
-                    @endforeach
+                    @else
+                        <span></span>
+                    @endif
+
+                    @if($nextArticle)
+                        <a wire:navigate href="{{ route('article', $nextArticle->slug) }}" 
+                           class="flex items-center gap-3 text-purple-400 hover:text-purple-300">
+                            <span>{{ $nextArticle->title }} →</span>
+                            <img src="{{ Storage::url($nextArticle->thumbnail) ?? 'https://placehold.co/100x100/8B5CF6/FFFFFF/png' }}" 
+                                 class="w-16 h-16 rounded-lg object-cover">
+                        </a>
+                    @endif
                 </div>
-            </div>
-        @endif
-    </div>
 
-    {{-- Sidebar --}}
-    <div class="space-y-8">
-        {{-- About --}}
-        <div class="sticky top-5">
-            <div class="bg-white rounded-2xl shadow p-6 ">
-                <h2 class="text-xl font-semibold mb-4">About</h2>
-                <p class="text-gray-600">
-                    Welcome to our blog where we share stories, tutorials, and insights.  
-                    Stay tuned for more fresh content.
-                </p>
-            </div>
+                <!-- Related Articles -->
+                <div class="mt-16">
+                    <h2 class="text-2xl font-bold mb-6">Related Articles</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        @foreach($relatedArticles as $related)
+                            <a wire:navigate href="{{ route('article', $related->slug) }}" class="bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition">
+                                <img src="{{ Storage::url($related->thumbnail)  ?? 'https://placehold.co/600x400/8B5CF6/FFFFFF/png?text=Article' }}" 
+                                 alt="{{ $related->title }}" 
+                                 class="rounded-lg mb-4 w-full h-48 object-cover">
+                                <div class="p-4">
+                                    <h3 class="font-semibold">{{ $related->title }}</h3>
+                                    {{-- <p class="text-sm text-gray-400 mt-1">{{ $related->published_date?->format('M d, Y') }}</p> --}}
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </article>
 
-            <livewire:share-article id="{{ $article->id }}" />
+            <!-- Sidebar -->
+            <aside class="space-y-8 ">
+                <div class="sticky top-40">
+                    <!-- About Section -->
+                    <div class="bg-gray-800 p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-3">About QueerWorx</h3>
+                        <p class="text-gray-400 text-sm">
+                            QueerWorx is a community-driven initiative in Lesotho, amplifying LGBTQ+ voices through storytelling and advocacy.
+                        </p>
+                    </div>
+
+                    <!-- Social Media -->
+                    {{-- <div class="bg-gray-800 p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-3">Follow Us</h3>
+                        <div class="flex gap-3">
+                            <a href="#" class="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="p-2 bg-sky-500 text-white rounded-full hover:bg-sky-600">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="p-2 bg-pink-600 text-white rounded-full hover:bg-pink-700">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div> --}}
+
+                    <livewire:components.social-share id="{{ $article->id }}" />
+                </div>
+            </aside>
         </div>
-
-        {{-- Social Links --}}
-        {{-- <div class="bg-white rounded-2xl shadow p-6">
-            <h2 class="text-xl font-semibold mb-4">Follow Us</h2>
-            <div class="flex gap-4">
-                <x-fab-facebook class="w-5 h-5" />
-                <x-fab-twitter class="w-5 h-5" />
-                <x-fab-instagram class="w-5 h-5" />
-                <x-fab-github class="w-5 h-5" />
-            </div>
-        </div> --}}
-    </div>
+    </section>
 </div>
-</div>
-

@@ -66,7 +66,7 @@ class extends Component {
         <div class="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent z-0"></div>
         <div class="absolute right-0 top-0 bottom-0 w-full md:w-1/2 gradient-bg opacity-20 z-0"></div>
         
-        <div class="container mx-auto px-4 max-w-7xl relative z-10">
+        <div class="container mx-auto px-8 max-w-7xl relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div>
                     <h1 class="text-4xl md:text-5xl font-bold leading-tight">
@@ -84,7 +84,7 @@ class extends Component {
                         </button>
                     </div>
                 </div>
-                <div class="flex justify-center">
+                {{-- <div class="flex justify-center">
                     <div class="relative">
                         <div class="w-80 h-80 rounded-full gradient-bg opacity-70 blur-xl absolute -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
                         <div class="bg-gray-800/80 backdrop-blur-lg rounded-2xl p-6 border border-gray-700 shadow-xl">
@@ -94,7 +94,7 @@ class extends Component {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
@@ -167,9 +167,12 @@ class extends Component {
         </div>
     </section>
 
+    <livewire:components.articles-overview />
+
     <!-- Events Section -->
-    <section class="py-16 bg-gray-800">
-        <div class="container mx-auto px-4 max-w-7xl">
+     {{-- <section class="py-16 bg-gray-800"> --}}
+
+        {{-- <div class="container mx-auto px-4 max-w-7xl">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold">Upcoming Events</h2>
                 <p class="text-gray-400 mt-2 max-w-2xl mx-auto">
@@ -232,36 +235,7 @@ class extends Component {
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     <!-- Newsletter Section -->
-    <section class="py-16 bg-gray-900">
-        <div class="container mx-auto px-4 max-w-5xl">
-            <div class="gradient-bg rounded-3xl p-10 text-center">
-                <h2 class="text-3xl font-bold text-white">Stay Connected</h2>
-                <p class="text-purple-100 mt-2 max-w-2xl mx-auto">
-                    Subscribe to our newsletter for updates on events, resources, and community news.
-                </p>
-                
-                <div class="mt-8 max-w-md mx-auto">
-                    <form class="flex flex-col sm:flex-row gap-4">
-                        <input 
-                            type="email" 
-                            placeholder="Your email address" 
-                            class="flex-grow bg-white/10 border border-white/20 rounded-full px-6 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-white"
-                        >
-                        <button 
-                            type="submit" 
-                            class="bg-white text-purple-600 hover:bg-gray-100 font-medium rounded-full px-6 py-3 transition"
-                        >
-                            Subscribe
-                        </button>
-                    </form>
-                </div>
-                
-                <p class="text-purple-200 text-sm mt-6">
-                    We respect your privacy. You can unsubscribe at any time.
-                </p>
-            </div>
-        </div>
-    </section>
+    <livewire:components.subscribe />
 </div>
