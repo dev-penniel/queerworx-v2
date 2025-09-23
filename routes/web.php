@@ -45,6 +45,12 @@ Route::middleware(['auth'])->group(function(){
 
 Route::middleware(['auth'])->group(function(){
 
+    Volt::route('adverts/index', 'adverts.index')->name('adverts.index');
+     
+});
+
+Route::middleware(['auth'])->group(function(){
+
     Volt::route('subscribers/index', 'subscribers.index')->name('subscribers.index');
      
 });

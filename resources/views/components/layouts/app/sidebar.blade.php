@@ -32,6 +32,9 @@
 
                     <flux:navlist.item icon="user-group" :href="route('subscribers.index')" :current="request()->routeIs('subscribers.index')" wire:navigate>{{ __('Subscribers') }}</flux:navlist.item>
 
+                    <flux:navlist.item icon="user-group" :href="route('adverts.index')" :current="request()->routeIs('adverts.index')" wire:navigate>{{ __('Adverts') }}</flux:navlist.item>
+
+
                     
                 </flux:navlist.group>
                 
