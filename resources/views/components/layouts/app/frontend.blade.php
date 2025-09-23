@@ -97,9 +97,21 @@
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-8">
-                    <a wire:navigate href="{{ route('home') }}" class="hover:text-purple-400 transition">Home</a>
+                    <a 
+                        wire:navigate 
+                        href="{{ route('home') }}" 
+                        class="transition {{ request()->routeIs('home') ? 'text-purple-600 font-semibold' : 'hover:text-purple-400' }}"
+                    >
+                        Home
+                    </a>
                     <a href="#" class="hover:text-purple-400 transition">Resources</a>
-                    <a wire:navigate href="{{ route('articles') }}" class="hover:text-purple-400 transition">Xpressions</a>
+                    <a 
+                        wire:navigate 
+                        href="{{ route('articles') }}" 
+                        class="transition {{ request()->routeIs('articles') ? 'text-purple-600 font-semibold' : 'hover:text-purple-400' }}"
+                    >
+                        Xpressions
+                    </a>
                     <a href="#" class="hover:text-purple-400 transition">Community</a>
                     <a href="#" class="hover:text-purple-400 transition">Events</a>
                     <a href="#" class="hover:text-purple-400 transition">Support</a>

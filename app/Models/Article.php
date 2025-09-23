@@ -28,6 +28,7 @@ class Article extends Model
     protected $casts = [
         'created_at' =>  'date',
         'published_at' => 'date',
+        'published_date' => 'date',
     ];
 
     public function categories(): BelongsToMany

@@ -76,7 +76,7 @@ class extends Component {
 
                 <div class="flex gap-5">
                     <p class="text-sm text-gray-500">
-                        Published {{ $article->created_at->format('M d, Y') }}
+                        Published {{ $article->published_date->format('M d, Y') }}
                         • {{ $article->categories->pluck('name')->join(', ') }}
                     </p>
 

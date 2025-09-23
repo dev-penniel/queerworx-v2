@@ -114,7 +114,7 @@ class extends Component {
                             </p>
 
                             <div class="mt-4 flex justify-between items-center text-sm text-gray-400">
-                                {{-- <span>{{ $article->published_date?->format('M d, Y') }}</span> --}}
+                                <span>{{ $article->published_date->format('M d, Y') }}</span>
                                 <a href="{{ route('article', $article->slug) }}" class="text-purple-400 hover:text-purple-300">
                                     Read More <i class="fas fa-arrow-right ml-1"></i>
                                 </a>
