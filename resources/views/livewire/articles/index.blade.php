@@ -95,12 +95,12 @@ new class extends Component {
                     @foreach ($this->articles as $article)
                         <tr class="border-b border-gray-300 hover:bg-gray-100" >
                             <td class="px-5 py-2 text-sm whitespace-nowrap">
-                            @if ($article->thumbnail)
-                                <div class="mt-2">
-                                    <img src="{{ Storage::url($article->thumbnail) }}" class="h-15 w-30 object-cover rounded-md">
-                                </div>
-                            @endif
-                        </td>
+                                @if ($article->thumbnail)
+                                    <div class="mt-2">
+                                        <img src="{{ Storage::url($article->thumbnail) }}" class="h-15 w-30 object-cover rounded-md">
+                                    </div>
+                                @endif
+                            </td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->title }}</td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">{{ $article->status }}</td>
                             <td class="px-5 py-2 text-sm whitespace-nowrap">

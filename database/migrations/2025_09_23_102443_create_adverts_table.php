@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('url');
-            $table->string('thumbnail');
+            $table->string('thumbnail')->nullable();
             $table->integer('position');
-            $table->integer('views');
-            $table->integer('clicks');
+            $table->integer('views')->nullable();
+            $table->integer('clicks')->nullable();
             $table->timestamps();
         });
     }
