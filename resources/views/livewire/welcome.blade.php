@@ -62,7 +62,7 @@ class extends Component {
 
 <div>
     <!-- Hero Section -->
-<section class="relative py-16 md:py-24 overflow-hidden">
+{{-- <section class="relative py-16 md:py-24 overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent z-0"></div>
         <div class="absolute right-0 top-0 bottom-0 w-full md:w-1/2 gradient-bg opacity-20 z-0"></div>
         
@@ -83,7 +83,7 @@ class extends Component {
                             Learn More
                         </button>
                     </div>
-                </div>
+                </div> --}}
                 {{-- <div class="flex justify-center">
                     <div class="relative">
                         <div class="w-80 h-80 rounded-full gradient-bg opacity-70 blur-xl absolute -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
@@ -95,9 +95,113 @@ class extends Component {
                         </div>
                     </div>
                 </div> --}}
+            {{-- </div>
+        </div>
+    </section> --}}
+    <section 
+        x-data="{ 
+            activeSlide: 0, 
+            startX: 0,
+            slides: [ 
+                {
+                    title: 'Building a <span class=\'text-purple-500\'>Stronger</span> LGBTQ+ Community in Lesotho',
+                    text: 'QueerWorx provides resources, support, and community for LGBTQ+ individuals in Lesotho. Join us in creating a more inclusive society.',
+                    img: 'https://placehold.co/400x300/8B5CF6/FFFFFF/png?text=Community+Image'
+                },
+                {
+                    title: 'Empowering <span class=\'text-purple-500\'>Voices</span> for Change',
+                    text: 'We create safe spaces where LGBTQ+ voices can be heard, celebrated, and supported in Lesotho.',
+                    img: 'https://placehold.co/400x300/9333EA/FFFFFF/png?text=Voices'
+                },
+                {
+                    title: 'Together We <span class=\'text-purple-500\'>Rise</span>',
+                    text: 'Through events, workshops, and advocacy, we are building resilience and solidarity within our community.',
+                    img: 'https://placehold.co/400x300/6D28D9/FFFFFF/png?text=Together'
+                }
+            ],
+            next() { this.activeSlide = (this.activeSlide + 1) % this.slides.length },
+            prev() { this.activeSlide = (this.activeSlide - 1 + this.slides.length) % this.slides.length }
+        }"
+        x-init="setInterval(() => next(), 5000)"
+        @touchstart="startX = $event.touches[0].clientX"
+        @touchend="let endX = $event.changedTouches[0].clientX;
+                if (startX - endX > 50) next(); 
+                if (endX - startX > 50) prev();"
+        class="relative py-16 md:py-24 overflow-hidden"
+    >
+        <!-- Background -->
+        <div class="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent z-0"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-full md:w-1/2 gradient-bg opacity-20 z-0"></div>
+
+        <!-- Slider Container -->
+        <div class="container mx-auto px-8 max-w-7xl relative z-10 overflow-hidden">
+            <div class="relative w-full min-h-[400px]"> <!-- 👈 ensure visible height -->
+                <template x-for="(slide, index) in slides" :key="index">
+                    <div 
+                        class="absolute inset-0 grid grid-cols-1 md:grid-cols-2 gap-12 items-center transition-all duration-700 ease-in-out"
+                        :class="{
+                            'opacity-100 translate-x-0': activeSlide === index,
+                            'opacity-0 -translate-x-full pointer-events-none': activeSlide > index,
+                            'opacity-0 translate-x-full pointer-events-none': activeSlide < index
+                        }"
+                    >
+                        <!-- Text Content -->
+                        <div>
+                            <h1 class="text-4xl md:text-5xl font-bold leading-tight" x-html="slide.title"></h1>
+                            <p class="text-lg text-gray-400 mt-4" x-text="slide.text"></p>
+                            <div class="flex flex-wrap gap-4 mt-8">
+                                <button class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full transition">
+                                    Get Involved
+                                </button>
+                                <button class="border border-purple-500 text-purple-300 hover:bg-purple-950/30 px-6 py-3 rounded-full transition">
+                                    Learn More
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="flex justify-center">
+                            <div class="relative">
+                                <div class="w-80 h-80 rounded-full gradient-bg opacity-70 blur-xl absolute -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+                                <div class="bg-gray-800/80 backdrop-blur-lg rounded-2xl p-6 border border-gray-700 shadow-xl">
+                                    <img :src="slide.img" alt="Community" class="rounded-xl w-full">
+                                    <div class="mt-4 text-center">
+                                        <p class="text-sm">Discover more on our journey</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
+
+        <!-- Arrows -->
+        <button 
+            @click="prev" 
+            class="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 bg-gray-800/70 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg transition"
+        >
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button 
+            @click="next" 
+            class="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 bg-gray-800/70 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg transition"
+        >
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- Dots -->
+        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+            <template x-for="(slide, index) in slides" :key="index">
+                <button 
+                    class="w-3 h-3 rounded-full transition"
+                    :class="activeSlide === index ? 'bg-purple-600 scale-125' : 'bg-gray-500'"
+                    @click="activeSlide = index"
+                ></button>
+            </template>
+        </div>
     </section>
+
 
     <!-- Ad Space -->
     <section class="py-8 bg-gray-800">
