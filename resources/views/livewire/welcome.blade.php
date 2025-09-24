@@ -204,7 +204,7 @@ class extends Component {
 
 
     <!-- Ad Space -->
-    <section class="py-8 bg-gray-800">
+    {{-- <section class="py-8 bg-gray-800">
         <div class="container mx-auto px-4 max-w-7xl">
             <div class="bg-gray-700/50 rounded-2xl p-6 text-center border border-gray-600">
                 <p class="text-gray-400 text-sm mb-2">Advertisement</p>
@@ -213,7 +213,7 @@ class extends Component {
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Resources Section -->
     <section class="py-16 bg-gray-900">

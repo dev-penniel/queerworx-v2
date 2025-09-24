@@ -130,4 +130,7 @@ class extends Component {
             @endif
         </div>
     </section>
+
+    {{-- Ads --}}
+    <livewire:components.adverts position="3" />
 </div>
