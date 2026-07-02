@@ -16,7 +16,9 @@ new class extends Component {
     public function getSubscribersProperty()
     {
         return Subscriber::when($this->search, function ($query){
-            $query->where('email', 'like', '%'.$this->search.'%');
+            $query->where('email', 'like', '%'.$this->search.'%')
+                ->orWhere('name', 'like', '%'.$this->search.'%')
+                ->orWhere('interest', 'like', '%'.$this->search.'%');
         })->latest()->paginate(50);
     }
 
@@ -175,7 +177,10 @@ new class extends Component {
                 <thead>
                 <th>
                     <tr class="bg-gray-100">
+                        <td class="px-5 py-3 font-bold text-sm">Name</td>
                         <td class="px-5 py-3 font-bold text-sm">Email</td>
+                        <td class="px-5 py-3 font-bold text-sm">Phone</td>
+                        <td class="px-5 py-3 font-bold text-sm">Interest</td>
                         <td class="px-5 py-3 font-bold text-sm">Created</td>
                         <td class="px-5 py-3 font-bold text-sm">Updated</td>
 
@@ -192,7 +197,10 @@ new class extends Component {
                 @foreach ($this->subscribers as $subscriber)
                 
                     <tr class="border-b border-gray-300 hover:bg-gray-100">
+                        <td class="px-5 py-2 text-sm">{{ $subscriber->name ?: 'Newsletter' }}</td>
                         <td class="px-5 py-2 text-sm">{{ $subscriber->email }}</td>
+                        <td class="px-5 py-2 text-sm">{{ $subscriber->phone ?: '-' }}</td>
+                        <td class="px-5 py-2 text-sm">{{ $subscriber->interest ?: '-' }}</td>
                         <td class="px-5 py-2 text-sm">{{ $subscriber->created_at->format('M d, Y H:i') }}</td>
                         <td class="px-5 py-2 text-sm">{{ $subscriber->updated_at->format('M d, Y H:i') }}</td>
                         

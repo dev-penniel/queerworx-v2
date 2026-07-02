@@ -216,7 +216,7 @@ class extends Component {
     </section> --}}
 
     <!-- Resources Section -->
-    <section class="py-16 bg-gray-900">
+    <section id="resources" class="py-16 bg-gray-900 scroll-mt-28">
         <div class="container mx-auto px-4 max-w-7xl">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold">Community Resources</h2>

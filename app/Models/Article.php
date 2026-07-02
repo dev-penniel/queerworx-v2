@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Traits\HasRoles;
 
 
@@ -34,5 +35,15 @@ class Article extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(ArticleComment::class);
+    }
+
+    public function approvedComments(): HasMany
+    {
+        return $this->comments()->where('status', 'approved')->latest();
     }
 }

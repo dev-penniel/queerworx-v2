@@ -2,15 +2,103 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
+        <style>
+            [data-flux-sidebar] [data-flux-navlist-item],
+            [data-flux-sidebar] .admin-sidebar-brand {
+                color: rgba(255, 255, 255, 0.82) !important;
+                transition: background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+            }
+
+            [data-flux-sidebar] [data-flux-navlist-item]:hover,
+            [data-flux-sidebar] [data-flux-navlist-item]:focus-visible,
+            [data-flux-sidebar] [data-flux-navlist-item][data-current],
+            [data-flux-sidebar] .admin-sidebar-brand:hover,
+            [data-flux-sidebar] .admin-sidebar-brand:focus-visible {
+                border-color: transparent !important;
+                color: #ffffff !important;
+                background:
+                    linear-gradient(rgba(33, 17, 70, 0.94), rgba(33, 17, 70, 0.94)) padding-box,
+                    linear-gradient(135deg, #E61E5C 0%, #F05A12 18%, #FFD83D 34%, #14A84D 52%, #149CB9 72%, #7646E8 100%) border-box !important;
+                box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+            }
+
+            [data-flux-sidebar] [data-flux-navlist-item]:hover,
+            [data-flux-sidebar] .admin-sidebar-brand:hover {
+                transform: translateX(2px);
+            }
+
+            [data-flux-main],
+            [data-flux-main] [data-flux-heading],
+            [data-flux-main] [data-flux-subheading],
+            [data-flux-main] [data-flux-breadcrumbs],
+            [data-flux-main] [data-flux-breadcrumbs] a,
+            [data-flux-main] label,
+            [data-flux-main] table,
+            [data-flux-main] td,
+            [data-flux-main] th {
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] [data-flux-text],
+            [data-flux-main] .text-zinc-500,
+            [data-flux-main] .text-zinc-600,
+            [data-flux-main] .text-gray-500,
+            [data-flux-main] .text-gray-600,
+            [data-flux-main] .dark\:text-zinc-400,
+            [data-flux-main] .dark\:text-zinc-500 {
+                color: rgba(255, 255, 255, 0.74) !important;
+            }
+
+            [data-flux-main] input,
+            [data-flux-main] textarea,
+            [data-flux-main] select {
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] input::placeholder,
+            [data-flux-main] textarea::placeholder {
+                color: rgba(255, 255, 255, 0.52) !important;
+            }
+
+            [data-flux-main] thead tr {
+                background: rgba(255, 255, 255, 0.09) !important;
+            }
+
+            [data-flux-main] tbody tr:hover {
+                background: rgba(255, 255, 255, 0.07) !important;
+            }
+
+            [data-flux-main] .bg-white,
+            [data-flux-main] .bg-gray-50,
+            [data-flux-main] .bg-gray-100,
+            [data-flux-main] .bg-zinc-50,
+            [data-flux-main] .bg-zinc-100 {
+                color: #111429 !important;
+            }
+
+            [data-flux-main] .bg-white *,
+            [data-flux-main] .bg-gray-50 *,
+            [data-flux-main] .bg-gray-100 *,
+            [data-flux-main] .bg-zinc-50 *,
+            [data-flux-main] .bg-zinc-100 * {
+                color: #111429 !important;
+            }
+
+            [data-flux-main] .bg-white input,
+            [data-flux-main] .bg-white textarea,
+            [data-flux-main] .bg-white select {
+                color: #111429 !important;
+            }
+        </style>
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky stashable class="w-[200px] border-r border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-[#111429] text-white dark:bg-[#111429]">
+        <flux:sidebar sticky stashable class="w-[200px] border-r border-white/10 bg-[#211146] text-white dark:border-white/10 dark:bg-[#211146]">
 
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
+            <a href="{{ route('dashboard') }}" class="admin-sidebar-brand mr-5 flex items-center space-x-2 rounded-lg border border-transparent px-3 py-2" wire:navigate>
                 {{-- <x-app-logo /> --}}
-                <h2 class="font-bold">Penniel Blog</h2>
+                <h2 class="font-bold">Queer WorX</h2>
             </a>
 
             <flux:navlist variant="outline">
@@ -19,16 +107,22 @@
 
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
 
-                    @can('article-list')
-                        <flux:navlist.item icon="newspaper" :href="route('articles.index')" :current="request()->routeIs('articles.index')" wire:navigate>{{ __('Articles') }}</flux:navlist.item>
-                        
-                    @endcan
+                    <flux:navlist.item icon="newspaper" :href="route('articles.index')" :current="request()->routeIs('articles.index')" wire:navigate>{{ __('Articles') }}</flux:navlist.item>
+                    <flux:navlist.item icon="chat-bubble-left-right" :href="route('comments.index')" :current="request()->routeIs('comments.index')" wire:navigate>{{ __('Comments') }}</flux:navlist.item>
 
-                    @can("category-list")
-                        <flux:navlist.item icon="clipboard-document-list" :href="route('categories.index')" :current="request()->routeIs('categories.index')" wire:navigate>{{ __('Categories') }}</flux:navlist.item>
-                    @endcan
+                    <flux:navlist.item icon="clipboard-document-list" :href="route('categories.index')" :current="request()->routeIs('categories.index')" wire:navigate>{{ __('Categories') }}</flux:navlist.item>
 
                     <flux:navlist.item icon="archive-box" :href="route('resources.index')" :current="request()->routeIs('resources.index')" wire:navigate>{{ __('Resources') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="document-text" :href="route('admin.documents')" :current="request()->routeIs('admin.documents')" wire:navigate>{{ __('Policies & Financials') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="identification" :href="route('admin.team-members')" :current="request()->routeIs('admin.team-members')" wire:navigate>{{ __('Team Members') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="user-group" :href="route('admin.join-us')" :current="request()->routeIs('admin.join-us')" wire:navigate>{{ __('Join Us Page') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="radio" :href="route('admin.support')" :current="request()->routeIs('admin.support')" wire:navigate>{{ __('Support Page') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="squares-2x2" :href="route('admin.programs')" :current="request()->routeIs('admin.programs')" wire:navigate>{{ __('Programs') }}</flux:navlist.item>
 
                     <flux:navlist.item icon="user-group" :href="route('subscribers.index')" :current="request()->routeIs('subscribers.index')" wire:navigate>{{ __('Subscribers') }}</flux:navlist.item>
 
@@ -116,7 +210,7 @@
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
+        <flux:header class="border-b border-white/10 bg-[#211146] text-white lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <flux:spacer />

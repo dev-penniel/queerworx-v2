@@ -87,7 +87,7 @@ new class extends Component {
 
     {{-- Create category modal --}}
     <flux:modal name="create-category" class="md:w-96">
-        <form wire:submit.ignore="createCategory">
+        <form wire:submit="createCategory">
             <div class="space-y-6">
                 <div>
                     <flux:heading size="lg">Add New Category</flux:heading>
@@ -118,7 +118,7 @@ new class extends Component {
 
     {{-- Update category modal --}}
     <flux:modal name="update-category" class="md:w-96">
-        <form wire:submit.ignore="updateCategory({{ $id }})">
+        <form wire:submit="updateCategory({{ $id }})">
             <div class="space-y-6">
                 <div>
                     <flux:heading size="lg">Update Category</flux:heading>
@@ -163,11 +163,9 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            @can("category-create")
-                <flux:modal.trigger name="create-category">
-                    <flux:button class="cursor-pointer">Add</flux:button>
-                </flux:modal.trigger>
-            @endcan
+            <flux:modal.trigger name="create-category">
+                <flux:button class="cursor-pointer">Add</flux:button>
+            </flux:modal.trigger>
 
                 
 
@@ -192,10 +190,7 @@ new class extends Component {
                         <td class="px-5 py-3 font-bold text-sm">Created</td>
                         <td class="px-5 py-3 font-bold text-sm">Updated</td>
 
-                            @canany(['category-edit', 'category-delete'])
-
-                                <td class="px-5 py-3 font-bold text-sm">Actions</td>
-                            @endcanany
+                            <td class="px-5 py-3 font-bold text-sm">Actions</td>
                         
                     </tr>
                 </th>
@@ -211,23 +206,12 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm">{{ $category->updated_at->format('M d, Y H:i') }}</td>
                         
                             
-                            @canany(['category-edit', 'category-delete'])
-                                <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
-                                    
-                                        @can("category-edit")
-                                            <flux:modal.trigger wire:click="edit({{ $category->id }})" name="update-category">
-                                                <flux:icon.pencil-square class="size-5 cursor-pointer" color="green" />
-                                            </flux:modal.trigger>
-                                        @endcan
-
-                                        @can("category-delete")
-                                            <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteCategory({{ $category->id }})" wire:confirm="Are you sure you want to delete?" />
-                                            {{-- <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="$js.showAlert({{ $product->id }})" /> --}}
-                                        @endcan
-                                        
-
-                                </td>
-                            @endcanany
+                            <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
+                                <flux:modal.trigger wire:click="edit({{ $category->id }})" name="update-category">
+                                    <flux:icon.pencil-square class="size-5 cursor-pointer" color="green" />
+                                </flux:modal.trigger>
+                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteCategory({{ $category->id }})" wire:confirm="Are you sure you want to delete?" />
+                            </td>
                         
                     </tr>
 
@@ -256,6 +240,5 @@ new class extends Component {
     })
 </script>
 @endscript --}}
-
 
 

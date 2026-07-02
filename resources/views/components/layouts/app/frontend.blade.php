@@ -79,15 +79,18 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.4);
         }
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 min-h-screen" x-data="{ mobileMenu: false, darkMode: true }">
+<body class="bg-gray-900 text-gray-200 min-h-screen" x-data="{ mobileMenu: false, searchOpen: false, aboutMenu: false, eventsMenu: false, programsMenu: false, darkMode: true }">
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-gray-800 shadow-lg">
         <div class="container mx-auto px-8 py-8 max-w-7xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <a href="#" class="flex items-center space-x-2">
+                    <a wire:navigate href="{{ route('home') }}" class="flex items-center space-x-2">
                         <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
                             <span class="text-white font-bold text-xl">Q</span>
                         </div>
@@ -96,32 +99,140 @@
                 </div>
 
                 <!-- Desktop Navigation -->
-                <nav class="hidden md:flex space-x-8">
+                <nav class="hidden items-center space-x-8 md:flex">
                     <a 
                         wire:navigate 
                         href="{{ route('home') }}" 
-                        class="transition {{ request()->routeIs('home') ? 'text-purple-600 font-semibold' : 'hover:text-purple-400' }}"
+                        class="transition {{ request()->routeIs('home') ? 'text-purple-600 font-semibold' : 'hover:text-[#E61E5C]' }}"
                     >
                         Home
                     </a>
-                    <a href="#" class="hover:text-purple-400 transition">Resources</a>
+                    <div
+                        class="relative"
+                        @mouseenter="aboutMenu = true"
+                        @mouseleave="aboutMenu = false"
+                    >
+                        <a
+                            wire:navigate
+                            href="{{ route('about') }}"
+                            class="inline-flex items-center gap-2 transition {{ request()->routeIs('about') ? 'text-purple-600 font-semibold' : 'hover:text-[#F05A12]' }}"
+                            @focus="aboutMenu = true"
+                            @click="aboutMenu = !aboutMenu"
+                        >
+                            About Us
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </a>
+
+                        <div
+                            x-cloak
+                            x-show="aboutMenu"
+                            x-transition
+                            class="absolute left-0 top-full z-50 w-48 pt-4"
+                        >
+                            <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
+                                <a href="{{ route('team') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#E61E5C]">Team</a>
+                                <a href="{{ route('board') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#D98608]">Board</a>
+                                <a href="{{ route('policies') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#14A84D]">Policies</a>
+                                <a href="{{ route('financials') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#149CB9]">Financials</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ route('home') }}#resources" class="transition hover:text-[#FFD83D]">Resources</a>
                     <a 
                         wire:navigate 
                         href="{{ route('articles') }}" 
-                        class="transition {{ request()->routeIs('articles') ? 'text-purple-600 font-semibold' : 'hover:text-purple-400' }}"
+                        class="transition {{ request()->routeIs('articles') ? 'text-purple-600 font-semibold' : 'hover:text-[#14A84D]' }}"
                     >
                         Xpressions
                     </a>
-                    <a href="#" class="hover:text-purple-400 transition">Community</a>
-                    <a href="#" class="hover:text-purple-400 transition">Events</a>
-                    <a href="#" class="hover:text-purple-400 transition">Support</a>
+                    <div
+                        class="relative"
+                        @mouseenter="eventsMenu = true"
+                        @mouseleave="eventsMenu = false; programsMenu = false"
+                    >
+                        <a
+                            href="{{ route('events') }}"
+                            class="inline-flex items-center gap-2 transition {{ request()->routeIs('events') ? 'text-purple-600 font-semibold' : 'hover:text-[#2563EB]' }}"
+                            @focus="eventsMenu = true"
+                            @click="eventsMenu = !eventsMenu"
+                        >
+                            Events
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </a>
+
+                        <div
+                            x-cloak
+                            x-show="eventsMenu"
+                            x-transition
+                            class="absolute left-0 top-full z-50 w-52 pt-4"
+                        >
+                            <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
+                                <div
+                                    class="relative"
+                                    @mouseenter="programsMenu = true"
+                                    @mouseleave="programsMenu = false"
+                                >
+                                    <button type="button" class="flex w-full items-center justify-between rounded px-4 py-2 text-left text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#E61E5C]">
+                                        Programs
+                                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                                    </button>
+
+                                    <div
+                                        x-cloak
+                                        x-show="programsMenu"
+                                        x-transition
+                                        class="absolute left-full top-0 z-50 w-52 pl-3"
+                                    >
+                                        <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
+                                            <a href="{{ route('programs') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#F05A12]">Programs</a>
+                                            <a href="{{ route('programs') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#149CB9]">All Programs</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="{{ route('community') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#14A84D]">Community</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ route('support') }}" class="transition hover:text-[#7646E8]">Support</a>
                 </nav>
 
-                <div class="flex items-center space-x-4">
-                    <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm transition">
+                <div class="relative flex items-center space-x-3">
+                    <form
+                        x-cloak
+                        x-show="searchOpen"
+                        x-transition
+                        action="{{ route('search') }}"
+                        method="GET"
+                        class="absolute right-28 top-1/2 hidden w-64 -translate-y-1/2 md:block"
+                    >
+                        <label class="sr-only" for="site-search">Search site</label>
+                        <input
+                            id="site-search"
+                            name="q"
+                            type="search"
+                            placeholder="Search the whole site..."
+                            class="w-full rounded-full border border-white/10 bg-gray-900 px-4 py-2 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-purple-400"
+                        >
+                    </form>
+
+                    <a href="{{ route('join-us') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm transition">
                         Join Us
+                    </a>
+                    <button
+                        type="button"
+                        @click="searchOpen = !searchOpen"
+                        class="flex h-10 w-10 items-center justify-center rounded-full text-gray-300 transition hover:bg-white/5 hover:text-[#FFD83D]"
+                        aria-label="Search"
+                    >
+                        <i class="fas fa-search text-xl"></i>
                     </button>
-                    <button @click="mobileMenu = !mobileMenu" class="md:hidden text-gray-300 hover:text-white">
+                    <button
+                        type="button"
+                        @click="mobileMenu = !mobileMenu"
+                        class="flex h-10 w-10 items-center justify-center rounded-full text-gray-300 transition hover:bg-white/5 hover:text-[#14A84D]"
+                        aria-label="Open menu"
+                    >
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -129,16 +240,59 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div x-show="mobileMenu" class="md:hidden bg-gray-800 shadow-lg px-4 py-4">
+        <div x-show="mobileMenu" class="bg-gray-800 shadow-lg px-4 py-4 md:px-8">
             <div class="flex flex-col space-y-3">
-                <a href="#" class="hover:text-purple-400 transition py-2">Home</a>
-                <a href="#" class="hover:text-purple-400 transition py-2">Resources</a>
-                <a href="#" class="hover:text-purple-400 transition py-2">Community</a>
-                <a href="#" class="hover:text-purple-400 transition py-2">Events</a>
-                <a href="#" class="hover:text-purple-400 transition py-2">Support</a>
-                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm transition mt-2">
-                    Sign In
-                </button>
+                <form action="{{ route('search') }}" method="GET" class="md:hidden">
+                    <label class="sr-only" for="mobile-site-search">Search site</label>
+                    <input
+                        id="mobile-site-search"
+                        name="q"
+                        type="search"
+                        placeholder="Search the whole site..."
+                        class="w-full rounded-full border border-white/10 bg-gray-900 px-4 py-2 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-purple-400"
+                    >
+                </form>
+                <a
+                    wire:navigate
+                    href="{{ route('home') }}"
+                    class="transition py-2 {{ request()->routeIs('home') ? 'text-purple-600 font-semibold' : 'hover:text-[#E61E5C]' }}"
+                >
+                    Home
+                </a>
+                <a
+                    wire:navigate
+                    href="{{ route('about') }}"
+                    class="transition py-2 {{ request()->routeIs('about') ? 'text-purple-600 font-semibold' : 'hover:text-[#F05A12]' }}"
+                >
+                    About Us
+                </a>
+                <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
+                    <a href="{{ route('team') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#E61E5C]">Team</a>
+                    <a href="{{ route('board') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#D98608]">Board</a>
+                    <a href="{{ route('policies') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#14A84D]">Policies</a>
+                    <a href="{{ route('financials') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#149CB9]">Financials</a>
+                </div>
+                <a href="{{ route('home') }}#resources" class="transition py-2 hover:text-[#FFD83D]">Resources</a>
+                <a
+                    wire:navigate
+                    href="{{ route('articles') }}"
+                    class="transition py-2 {{ request()->routeIs('articles') ? 'text-purple-600 font-semibold' : 'hover:text-[#14A84D]' }}"
+                >
+                    Xpressions
+                </a>
+                <a href="{{ route('events') }}" class="transition py-2 hover:text-[#2563EB]">Events</a>
+                <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
+                    <span class="py-1 text-sm font-semibold text-gray-300">Programs</span>
+                    <div class="ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
+                        <a href="{{ route('programs') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#F05A12]">Programs</a>
+                        <a href="{{ route('programs') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#149CB9]">All Programs</a>
+                    </div>
+                    <a href="{{ route('community') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#14A84D]">Community</a>
+                </div>
+                <a href="{{ route('support') }}" class="transition py-2 hover:text-[#7646E8]">Support</a>
+                <a href="{{ route('join-us') }}" class="bg-purple-600 hover:bg-purple-700 text-center text-white px-4 py-2 rounded-full text-sm transition mt-2">
+                    Join Us
+                </a>
             </div>
         </div>
     </header>
@@ -157,19 +311,22 @@
                         <span class="text-xl font-bold">Queer<span class="text-purple-500">Worx</span></span>
                     </div>
                     <p class="text-gray-400 mt-4">
-                        Supporting and empowering the LGBTQ+ community in Lesotho.
+                        Promoting and advancing economic and social inclusion for Lesotho LGBTIQ+ community.
                     </p>
                     <div class="flex space-x-4 mt-6">
-                        <a href="#" class="text-gray-400 hover:text-white">
+                        <a href="https://web.facebook.com/queerworx" target="_blank" rel="noopener" class="text-gray-400 hover:text-white" aria-label="Queer WorX on Facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
+                        <a href="https://x.com/Queer_WorX" target="_blank" rel="noopener" class="text-gray-400 hover:text-white" aria-label="Queer WorX on X">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
+                        <a href="https://www.instagram.com/queer_worx" target="_blank" rel="noopener" class="text-gray-400 hover:text-white" aria-label="Queer WorX on Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
+                        <a href="https://www.tiktok.com/@queer_worx.ls" target="_blank" rel="noopener" class="text-gray-400 hover:text-white" aria-label="Queer WorX on TikTok">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/queer-worx/" target="_blank" rel="noopener" class="text-gray-400 hover:text-white" aria-label="Queer WorX on LinkedIn">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                     </div>
@@ -178,19 +335,19 @@
                 <div>
                     <h3 class="text-lg font-semibold">Quick Links</h3>
                     <ul class="mt-4 space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">Home</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Resources</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Get Involved</a></li>
+                        <li><a href="{{ route('home') }}" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="{{ route('about') }}" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="{{ route('home') }}#resources" class="text-gray-400 hover:text-white">Resources</a></li>
+                        <li><a href="{{ route('programs') }}" class="text-gray-400 hover:text-white">Programs</a></li>
+                        <li><a href="{{ route('join-us') }}" class="text-gray-400 hover:text-white">Get Involved</a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h3 class="text-lg font-semibold">Support</h3>
                     <ul class="mt-4 space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="{{ route('support') }}" class="text-gray-400 hover:text-white">Support Queer WorX</a></li>
+                        <li><a href="{{ route('support') }}#support-form" class="text-gray-400 hover:text-white">Contact Us</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
@@ -202,11 +359,11 @@
                     <ul class="mt-4 space-y-2">
                         <li class="flex items-start">
                             <i class="fas fa-map-marker-alt text-purple-400 mt-1 mr-2"></i>
-                            <span class="text-gray-400">123 Rainbow Road, Maseru, Lesotho</span>
+                            <span class="text-gray-400">Leseli Community Centre, Selakhapane, Khubetsoana, Berea Hills, Lesotho </span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-phone text-purple-400 mt-1 mr-2"></i>
-                            <span class="text-gray-400">+266 123 4567</span>
+                            <span class="text-gray-400">+26662642114</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-envelope text-purple-400 mt-1 mr-2"></i>

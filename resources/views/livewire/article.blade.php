@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use App\Models\Article;
+use App\Models\ArticleComment;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 
@@ -12,10 +13,14 @@ class extends Component {
     public $previousArticle;
     public $nextArticle;
     public $relatedArticles;
+    public $commentName = '';
+    public $commentEmail = '';
+    public $commentBody = '';
+    public $commentSubmitted = false;
 
     public function mount($slug)
     {
-        $this->article = Article::with('categories')->where('slug', $slug)->firstOrFail();
+        $this->article = Article::with(['categories', 'approvedComments'])->where('slug', $slug)->firstOrFail();
 
         // Increment views
         $this->article->increment('views');
@@ -46,6 +51,26 @@ class extends Component {
     {
         $this->article->increment('claps');
         $this->article->refresh();
+    }
+
+    public function submitComment()
+    {
+        $validated = $this->validate([
+            'commentName' => 'required|string|max:120',
+            'commentEmail' => 'nullable|email|max:160',
+            'commentBody' => 'required|string|min:5|max:1200',
+        ]);
+
+        ArticleComment::create([
+            'article_id' => $this->article->id,
+            'name' => $validated['commentName'],
+            'email' => $validated['commentEmail'],
+            'body' => $validated['commentBody'],
+            'status' => 'pending',
+        ]);
+
+        $this->reset(['commentName', 'commentEmail', 'commentBody']);
+        $this->commentSubmitted = true;
     }
 };
 ?>
@@ -91,6 +116,56 @@ class extends Component {
                 <div class="prose prose-invert max-w-none text-gray-400">
                     {!! $article->body !!}
                 </div>
+
+                <section class="mt-14 rounded-2xl border border-gray-700 bg-gray-800/60 p-6">
+                    <h2 class="text-2xl font-bold">Comments</h2>
+                    <p class="mt-2 text-sm text-gray-400">Comments are reviewed before they appear publicly.</p>
+
+                    <div class="mt-6 space-y-4">
+                        @forelse($article->approvedComments as $comment)
+                            <article class="rounded-xl border border-gray-700 bg-gray-900/70 p-4">
+                                <div class="flex items-center justify-between gap-4">
+                                    <h3 class="font-semibold text-white">{{ $comment->name }}</h3>
+                                    <span class="text-xs text-gray-500">{{ $comment->approved_at?->format('M d, Y') ?? $comment->created_at->format('M d, Y') }}</span>
+                                </div>
+                                <p class="mt-3 text-sm leading-6 text-gray-300">{{ $comment->body }}</p>
+                            </article>
+                        @empty
+                            <p class="text-sm text-gray-400">No approved comments yet. Start the conversation.</p>
+                        @endforelse
+                    </div>
+
+                    @if($commentSubmitted)
+                        <div class="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-200">
+                            Thanks. Your comment has been submitted and is awaiting admin approval.
+                        </div>
+                    @endif
+
+                    <form wire:submit="submitComment" class="mt-6 grid gap-4">
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <label class="grid gap-2">
+                                <span class="text-sm font-semibold">Name</span>
+                                <input wire:model="commentName" type="text" class="rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white outline-none focus:border-purple-400">
+                                @error('commentName') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
+                            </label>
+                            <label class="grid gap-2">
+                                <span class="text-sm font-semibold">Email (optional)</span>
+                                <input wire:model="commentEmail" type="email" class="rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white outline-none focus:border-purple-400">
+                                @error('commentEmail') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
+                            </label>
+                        </div>
+                        <label class="grid gap-2">
+                            <span class="text-sm font-semibold">Comment</span>
+                            <textarea wire:model="commentBody" rows="4" class="rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white outline-none focus:border-purple-400"></textarea>
+                            @error('commentBody') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
+                        </label>
+                        <div>
+                            <button type="submit" class="rounded-full bg-purple-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-purple-700">
+                                Submit Comment
+                            </button>
+                        </div>
+                    </form>
+                </section>
 
                 <!-- Prev / Next Navigation -->
                 <div class="flex justify-between items-center mt-12">

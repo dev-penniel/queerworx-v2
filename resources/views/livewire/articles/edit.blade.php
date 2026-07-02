@@ -37,7 +37,7 @@ new class extends Component {
         $this->currentThumbnail = $this->article->thumbnail;
 
         // Mearge Categories
-        $this->selectedCategories = $this->article->categories()->get(['categories.id', 'categories.name'])->map(fn ($cat) => [$cat->id, $cat->name])->toArray();
+        $this->selectedCategories = $this->article->categories()->pluck('categories.id')->map(fn ($id) => (string) $id)->toArray();
     }
 
 
@@ -46,7 +46,7 @@ new class extends Component {
 
         $article = Article::findOrFail($id);
 
-        $categoryIds = array_column($this->selectedCategories, 0);
+        $categoryIds = $this->selectedCategories;
 
         $validated = $this->validate([
             'title' => 'required|string|max:255',
@@ -55,6 +55,8 @@ new class extends Component {
             'thumbnail' => 'nullable|image|max:2048',
             'imgCredit' => 'nullable',
             'status' => 'string',
+            'selectedCategories' => 'array',
+            'selectedCategories.*' => 'exists:categories,id',
         ]);
 
         $this->slug = Str::slug($validated['title']);
@@ -321,103 +323,19 @@ new class extends Component {
                     autocomplete="title"
                 />
 
-                {{-- <select multiple>
-
-                    @forelse ($categories as $category )
-
-                        <flux:select.option value="{{ $category->id }}" >{{ $category->name }}</flux:select.option>
-
-                    @empty
-
-                        <flux:select.option value="draft" >No Categories</flux:select.option>
-                
-                    @endforelse
-
-                </select> --}}
-
-                {{-- Searchable multi select --}}
-                <div wire:ignore x-data="{
-                    isOpen: false,
-                    query: '',
-                    selectedOptions: @entangle('selectedCategories'),
-                    options: @js($categories),
-                    allOptions: @js($categories),
-
-                    get filteredOptions(){
-                        return this.options.filter(option =>
-                            option.name.toLowerCase().includes(this.query.toLowerCase()) &&
-                            !this.selectedOptions.some(([id]) => id === option.id)
-                        );
-                    },
-                    toggleDropDown(){
-                        this.isOpen = !this.isOpen;
-                    },
-                    closeDropDown(){
-                        this.isOpen = false;
-                    },
-                    removeSelectedFromOptions(){
-                        this.options = this.options.filter(option =>
-                            !this.selectedOptions.some(([id]) => id === option.id)
-                        );
-                    },
-                    removeFromSelected(option){
-                        this.selectedOptions = this.selectedOptions.filter(id => id !== option);
-                        this.resetOptions(option);
-                        
-                    },
-                    selectOption(option){
-                        this.selectedOptions.push([option.id, option.name]);
-                        this.query = '';
-                        this.closeDropDown();
-                        this.removeSelectedFromOptions();
-                    },
-                    resetOptions(option) {
-                        this.options = this.allOptions.filter(option => 
-                            !this.selectedOptions.some(([id]) => id === option.id)
-                        );
-                    }
-                }" class=" w-full mb-5">
-
-                    <label class="block mb-2 text-gray-700 font-medium" for="option">Select Option</label>
-
-                    <div class="flex gap-2 flex-wrap cursor-pointer">
-                        <template x-for="(selectedOption, index) in selectedOptions" :key="index">
-                            <flux:badge size="sm">
-                                <div @click="removeFromSelected(selectedOption)" class="flex">
-                                    <p x-text="selectedOption[1]"></p> <flux:badge.close class="cursor-pointer" />
-                                </div>
-                            </flux:badge>
-                            
-                        </template>
+                <div class="mb-5">
+                    <label class="mb-2 block text-sm font-medium text-white">Categories</label>
+                    <div class="grid max-h-48 gap-2 overflow-auto rounded-lg border border-white/10 bg-[#111429] p-4">
+                        @forelse ($categories as $category)
+                            <label class="flex items-center gap-3 text-sm text-white/80">
+                                <input wire:model="selectedCategories" value="{{ $category->id }}" type="checkbox" class="rounded border-white/20 bg-transparent text-purple-600">
+                                <span>{{ $category->name }}</span>
+                            </label>
+                        @empty
+                            <p class="text-sm text-white/55">No categories have been created yet.</p>
+                        @endforelse
                     </div>
-
-                    <!-- Selected options -->
-                    <div @click="toggleDropDown" class="mt-4 border border-gray rounded-lg px-4 py-2 flex justify-between items-center cursor-pointer focus:ring focus:ring-blue-200">
-                        <span x-text="'Choose an option'"></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                        </svg>
-                    </div>
-
-                    <!-- Drop Down Options -->
-                    <div x-show="isOpen" @click.away="closeDropDown" class="absolute top-0 max-w-[320px] max-h-[90vh] overflow-scroll z-10 bg-white shadow-lg rounded-lg mt-2 w-full border border-gray-200"> 
-
-                        <!-- Input Search -->
-                        <div class="p-2">
-                        <input x-model="query" type="text" placeholder="Search..." class="w-full border border-gray-300 rounded-lg px-3
-                        py-2 focus:outline-none focus:ring focus:ring-blue-200"> 
-                        </div>
-
-                        <!-- Options -->
-                        <ul>
-                            <template x-for="option in filteredOptions" :key="option.id">
-                                <li @click="selectOption(option)" class="px-4 py-2 hover:bg-gray-100 cursor-pointer" x-text="option.name"></li>
-                            </template>
-                            <li x-show="filteredOptions.length === 0" class="px-4 py-4 text-gray-500 text-center"> No Options Found</li>
-                        </ul>
-
-                    </div>
-
+                    @error('selectedCategories.*') <span class="mt-1 block text-sm text-pink-300">{{ $message }}</span> @enderror
                 </div>
 
                 
@@ -431,9 +349,7 @@ new class extends Component {
                         {{ __('Saved.') }}
                     </x-action-message>
 
-                    @can('article-view')
-                        <flux:button  href="{{ route('article', ['slug' => $article->slug]) }}" Target="_BLANK">View Article</flux:button>
-                    @endcan
+                    <flux:button href="{{ route('article', ['slug' => $article->slug]) }}" target="_BLANK">View Article</flux:button>
                 </div>
             </div>
             
