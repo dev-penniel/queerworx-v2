@@ -85,16 +85,21 @@
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200 min-h-screen" x-data="{ mobileMenu: false, searchOpen: false, aboutMenu: false, eventsMenu: false, programsMenu: false, darkMode: true }">
+    @php
+        $navPrograms = \App\Models\Program::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+    @endphp
+
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-gray-800 shadow-lg">
         <div class="container mx-auto px-8 py-8 max-w-7xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <a wire:navigate href="{{ route('home') }}" class="flex items-center space-x-2">
-                        <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
-                            <span class="text-white font-bold text-xl">Q</span>
-                        </div>
-                        <span class="text-xl font-bold">Queer<span class="text-purple-500">Worx</span></span>
+                    <a wire:navigate href="{{ route('home') }}" class="flex items-center">
+                        <img
+                            src="{{ asset('images/qw-logo-latest-trimmed.png') }}"
+                            alt="Queer WorX"
+                            class="h-20 w-auto object-contain md:h-24"
+                        >
                     </a>
                 </div>
 
@@ -132,6 +137,7 @@
                             <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
                                 <a href="{{ route('team') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#E61E5C]">Team</a>
                                 <a href="{{ route('board') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#D98608]">Board</a>
+                                <a href="{{ route('partners') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#7646E8]">Partners</a>
                                 <a href="{{ route('policies') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#14A84D]">Policies</a>
                                 <a href="{{ route('financials') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#149CB9]">Financials</a>
                             </div>
@@ -173,7 +179,7 @@
                                     @mouseleave="programsMenu = false"
                                 >
                                     <button type="button" class="flex w-full items-center justify-between rounded px-4 py-2 text-left text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#E61E5C]">
-                                        Programs
+                                        By Program
                                         <i class="fa-solid fa-chevron-right text-xs"></i>
                                     </button>
 
@@ -184,7 +190,14 @@
                                         class="absolute left-full top-0 z-50 w-52 pl-3"
                                     >
                                         <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
-                                            <a href="{{ route('programs') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#F05A12]">Programs</a>
+                                            @forelse ($navPrograms as $program)
+                                                <a href="{{ route('programs.show', $program->id) }}" class="flex items-center gap-2 rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-white">
+                                                    <span class="h-2 w-2 rounded-full" style="background-color: {{ $program->color }}"></span>
+                                                    <span>{{ $program->name }}</span>
+                                                </a>
+                                            @empty
+                                                <span class="block rounded px-4 py-2 text-sm text-gray-500">No programs yet</span>
+                                            @endforelse
                                             <a href="{{ route('programs') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#149CB9]">All Programs</a>
                                         </div>
                                     </div>
@@ -269,6 +282,7 @@
                 <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
                     <a href="{{ route('team') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#E61E5C]">Team</a>
                     <a href="{{ route('board') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#D98608]">Board</a>
+                    <a href="{{ route('partners') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#7646E8]">Partners</a>
                     <a href="{{ route('policies') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#14A84D]">Policies</a>
                     <a href="{{ route('financials') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#149CB9]">Financials</a>
                 </div>
@@ -282,9 +296,13 @@
                 </a>
                 <a href="{{ route('events') }}" class="transition py-2 hover:text-[#2563EB]">Events</a>
                 <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
-                    <span class="py-1 text-sm font-semibold text-gray-300">Programs</span>
+                    <span class="py-1 text-sm font-semibold text-gray-300">By Program</span>
                     <div class="ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
-                        <a href="{{ route('programs') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#F05A12]">Programs</a>
+                        @forelse ($navPrograms as $program)
+                            <a href="{{ route('programs.show', $program->id) }}" class="py-1 text-sm text-gray-400 transition hover:text-white">{{ $program->name }}</a>
+                        @empty
+                            <span class="py-1 text-sm text-gray-500">No programs yet</span>
+                        @endforelse
                         <a href="{{ route('programs') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#149CB9]">All Programs</a>
                     </div>
                     <a href="{{ route('community') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#14A84D]">Community</a>

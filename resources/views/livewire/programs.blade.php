@@ -9,9 +9,10 @@ class extends Component {
 }; ?>
 
 @php
-    $programs = \App\Models\Program::with(['activities' => fn ($query) => $query->latest('activity_date')->latest()])
+    $programs = \App\Models\Program::with(['activities' => fn ($query) => $query->with('media')->latest('activity_date')->latest()])
         ->where('is_active', true)
-        ->latest()
+        ->orderBy('sort_order')
+        ->orderBy('name')
         ->get();
 @endphp
 
@@ -44,19 +45,25 @@ class extends Component {
 
                         <div class="mt-5 space-y-4">
                             @forelse ($program->activities as $activity)
-                                <div class="rounded border border-white/10 bg-black/20 p-4">
-                                    @if ($activity->image_path)
-                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($activity->image_path) }}" alt="{{ $activity->title }}" class="mb-4 aspect-video w-full rounded object-cover">
+                                <div class="rounded border border-white/10 bg-black/20 p-4 transition hover:border-[#FFD83D]/60">
+                                    @php
+                                        $activityImage = $activity->featured_image_path ?: $activity->image_path ?: $activity->media->firstWhere('type', 'image')?->file_path;
+                                    @endphp
+                                    @if ($activityImage)
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($activityImage) }}" alt="{{ $activity->title }}" class="mb-4 aspect-video w-full rounded object-cover">
                                     @endif
 
                                     <h3 class="font-bold text-white">{{ $activity->title }}</h3>
-                                    <p class="mt-1 text-xs text-white/40">{{ optional($activity->activity_date)->format('M d, Y') }}</p>
+                                    <p class="mt-1 text-xs text-white/40">
+                                        {{ ucfirst($activity->status) }} · {{ optional($activity->activity_date)->format('M d, Y') ?? 'Date to be announced' }}
+                                    </p>
 
                                     @if ($activity->description)
                                         <p class="mt-2 text-sm leading-6 text-white/55">{{ $activity->description }}</p>
                                     @endif
 
                                     <div class="mt-4 flex flex-wrap gap-2">
+                                        <a href="{{ route('events.show', $activity->id) }}" class="rounded bg-[#FFD83D] px-3 py-1 text-xs font-bold text-[#111429]">View event</a>
                                         @if ($activity->video_path)
                                             <a href="{{ \Illuminate\Support\Facades\Storage::url($activity->video_path) }}" target="_blank" class="rounded bg-[#7646E8] px-3 py-1 text-xs font-bold text-white">Watch video</a>
                                         @endif

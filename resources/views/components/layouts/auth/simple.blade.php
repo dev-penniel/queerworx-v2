@@ -40,16 +40,36 @@
             [data-flux-button] {
                 color: #ffffff !important;
             }
+
+            [data-flux-button],
+            button[type="submit"] {
+                background-color: #14A84D !important;
+                border-color: #14A84D !important;
+                color: #ffffff !important;
+            }
+
+            [data-flux-button]:hover,
+            [data-flux-button]:focus-visible,
+            [data-flux-button]:active,
+            button[type="submit"]:hover,
+            button[type="submit"]:focus-visible,
+            button[type="submit"]:active {
+                background-color: #0f7a38 !important;
+                border-color: #14A84D !important;
+                color: #ffffff !important;
+                box-shadow: 0 0 0 3px rgba(20, 168, 77, 0.28) !important;
+            }
         </style>
     </head>
     <body class="min-h-screen bg-[#111429] text-white antialiased dark:bg-[#111429]">
         <div class="flex min-h-svh flex-col items-center justify-center gap-6 bg-[radial-gradient(circle_at_30%_0%,rgba(230,30,92,0.22),transparent_34%),linear-gradient(180deg,#211146_0%,#111429_58%,#0b0d1d_100%)] p-6 md:p-10">
             <div class="flex w-full max-w-sm flex-col gap-2">
                 <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
-                    <span class="mb-1 flex h-14 w-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,#E61E5C_0%,#F05A12_18%,#FFD83D_34%,#14A84D_52%,#149CB9_72%,#7646E8_100%)] text-2xl font-bold text-white shadow-lg shadow-black/25">
-                        Q
-                    </span>
-                    <span class="text-xl font-bold text-white">Queer<span class="text-purple-300">WorX</span></span>
+                    <img
+                        src="{{ asset('images/qw-logo-latest-trimmed.png') }}"
+                        alt="Queer WorX"
+                        class="h-16 w-auto object-contain"
+                    >
                 </a>
                 <div class="flex flex-col gap-6">
                     {{ $slot }}

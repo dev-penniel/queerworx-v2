@@ -15,12 +15,15 @@ Volt::route('search', 'search')->name('search');
 Volt::route('join-us', 'join-us')->name('join-us');
 Volt::route('support', 'support')->name('support');
 Volt::route('events', 'events')->name('events');
+Volt::route('events/{activity}', 'event-detail')->name('events.show');
 Volt::route('community', 'community')->name('community');
 Volt::route('programs', 'programs')->name('programs');
+Volt::route('programs/{program}', 'program-events')->name('programs.show');
 Volt::route('financials', 'financials')->name('financials');
 Volt::route('policies', 'policies')->name('policies');
 Volt::route('team', 'team')->name('team');
 Volt::route('board', 'board')->name('board');
+Volt::route('partners', 'partners')->name('partners');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

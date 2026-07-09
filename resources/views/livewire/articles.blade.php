@@ -78,26 +78,14 @@ class extends Component {
 
 @php
     $featuredArticle = $articles->first();
-    $latestArticles = $articles->skip(1)->take(3)->values();
+    $latestArticles = Article::with('categories')
+        ->where('status', 'published')
+        ->orderBy('published_date', 'desc')
+        ->latest()
+        ->take(3)
+        ->get();
     $popularArticles = $articles->sortByDesc('views')->take(5)->values();
     $communityArticle = $articles->first(fn ($article) => $article->categories->contains('name', 'Community Stories')) ?? $featuredArticle;
-
-    $fallbackArticles = collect([
-        ['title' => 'Coming Out in Lesotho: My Journey', 'category' => 'Community Stories', 'excerpt' => 'A personal story of courage, fear, and finding acceptance in unexpected places.', 'author' => 'Beekay Bane.', 'date' => 'May 05, 2026', 'color' => 'from-pink-200 via-rose-100 to-green-100', 'icon' => 'fa-heart'],
-        ['title' => 'Understanding Gender Identity', 'category' => 'Education', 'excerpt' => 'A simple guide to understanding gender identity and how it differs from sex.', 'author' => 'Queer Worx Team', 'date' => 'May 12, 2026', 'color' => 'from-amber-100 via-yellow-100 to-blue-100', 'icon' => 'fa-brain'],
-        ['title' => 'Mental Health: You Are Not Alone', 'category' => 'Health & Wellbeing', 'excerpt' => 'Taking care of your mental health as an LGBTIQ+ person.', 'author' => 'Tsebo Phakisi.', 'date' => 'May 8, 2026', 'color' => 'from-pink-100 via-purple-100 to-cyan-100', 'icon' => 'fa-capsules'],
-    ]);
-
-    $categoryTiles = [
-        ['name' => 'News & Updates', 'icon' => 'fa-bullhorn', 'bg' => 'bg-purple-50', 'color' => 'text-purple-600'],
-        ['name' => 'Community Stories', 'icon' => 'fa-people-group', 'bg' => 'bg-pink-50', 'color' => 'text-pink-500'],
-        ['name' => 'Education', 'icon' => 'fa-book-open', 'bg' => 'bg-blue-50', 'color' => 'text-blue-500'],
-        ['name' => 'Health & Wellbeing', 'icon' => 'fa-heart-pulse', 'bg' => 'bg-emerald-50', 'color' => 'text-emerald-500'],
-        ['name' => 'Rights & Advocacy', 'icon' => 'fa-scale-balanced', 'bg' => 'bg-orange-50', 'color' => 'text-orange-500'],
-        ['name' => 'Culture', 'icon' => 'fa-palette', 'bg' => 'bg-yellow-50', 'color' => 'text-yellow-500'],
-        ['name' => 'Voices', 'icon' => 'fa-microphone-lines', 'bg' => 'bg-violet-50', 'color' => 'text-violet-500'],
-        ['name' => 'Events', 'icon' => 'fa-calendar-days', 'bg' => 'bg-rose-50', 'color' => 'text-rose-500'],
-    ];
 
     $articleUrl = fn ($article) => $article ? route('article', $article->slug) : route('submit-story');
 @endphp
@@ -196,47 +184,18 @@ class extends Component {
                             <p class="mt-2 text-sm leading-6 text-white/60">{{ Str::limit($article->exerpt ?: strip_tags($article->body), 105) }}</p>
                             <div class="mt-5 flex items-center gap-3 text-xs font-medium text-white/45">
                                 <span>{{ $article->img_credit ?: 'Queer Worx Team' }}</span>
-                                <span>•</span>
+                                <span>&bull;</span>
                                 <span>{{ $article->published_date?->format('M d, Y') }}</span>
-                                <span>•</span>
+                                <span>&bull;</span>
                                 <span>5 min read</span>
                             </div>
                         </div>
                     </a>
                 @empty
-                    @foreach ($fallbackArticles as $item)
-                        <article class="overflow-hidden rounded-[8px] border border-white/10 bg-black/25 shadow-sm">
-                            <div class="flex h-44 items-center justify-center bg-gradient-to-br {{ $item['color'] }} text-purple-500">
-                                <i class="fa-solid {{ $item['icon'] }} text-6xl"></i>
-                            </div>
-                            <div class="p-5">
-                                <span class="rounded bg-purple-100 px-3 py-1 text-[11px] font-bold uppercase text-purple-700">{{ $item['category'] }}</span>
-                                <h3 class="mt-4 text-xl font-bold leading-snug text-white">{{ $item['title'] }}</h3>
-                                <p class="mt-2 text-sm leading-6 text-white/60">{{ $item['excerpt'] }}</p>
-                                <div class="mt-5 flex items-center gap-3 text-xs font-medium text-white/45">
-                                    <span>{{ $item['author'] }}</span>
-                                    <span>•</span>
-                                    <span>{{ $item['date'] }}</span>
-                                    <span>•</span>
-                                    <span>5 min read</span>
-                                </div>
-                            </div>
-                        </article>
-                    @endforeach
-                @endforelse
+                    <div class="rounded-[8px] border border-white/10 bg-black/25 p-6 text-sm text-white/60 lg:col-span-3">
+                        No published articles yet. Latest articles will appear here after they are approved and published in the admin dashboard.
+                    </div>@endforelse
             </div>
-        </div>
-    </section>
-
-    <section class="mx-auto max-w-7xl px-6 py-8">
-        <h2 class="text-3xl font-bold">Browse by Category</h2>
-        <div class="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
-            @foreach ($categoryTiles as $tile)
-                <button wire:click="selectCategory('{{ $tile['name'] }}')" class="{{ $tile['bg'] }} rounded-[8px] p-5 text-center transition hover:-translate-y-1 hover:shadow-md">
-                    <i class="fa-solid {{ $tile['icon'] }} {{ $tile['color'] }} text-4xl"></i>
-                    <span class="mt-4 block text-sm font-bold leading-tight text-gray-900">{{ $tile['name'] }}</span>
-                </button>
-            @endforeach
         </div>
     </section>
 

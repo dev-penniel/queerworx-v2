@@ -95,7 +95,10 @@ new class extends Component {
                             <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                                 
                                 @can('role-edit')
-                                    <a wire:navigate href="{{ route('roles.edit', $role->id) }}"><flux:icon.pencil-square class="size-5" color="green" /></a>
+                                    <a wire:navigate href="{{ route('roles.edit', $role->id) }}" class="inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]">
+                                        <flux:icon.pencil-square class="size-5" />
+                                        <span>Edit</span>
+                                    </a>
                                     
                                 @endcan
                                 
@@ -124,5 +127,4 @@ new class extends Component {
 
     </div>
 </div>
-
 

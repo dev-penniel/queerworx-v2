@@ -39,7 +39,7 @@
                     <a wire:navigate href="{{ route('about') }}" class="inline-flex items-center gap-2 rounded border border-white/25 px-4 py-2 text-sm font-semibold text-white">
                         <flux:icon.eye class="size-4" /> About Page
                     </a>
-                    <a wire:navigate href="{{ route('admin.documents') }}" class="inline-flex items-center gap-2 rounded bg-white px-4 py-2 text-sm font-semibold text-[#111429]" style="color: #111429 !important;">
+                    <a wire:navigate href="{{ route('admin.documents') }}" class="inline-flex items-center gap-2 rounded bg-[#14A84D] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0f7a38]">
                         <flux:icon.document-arrow-up class="size-4" /> Upload PDF
                     </a>
                     <a wire:navigate href="{{ route('admin.programs') }}" class="inline-flex items-center gap-2 rounded border border-white/25 px-4 py-2 text-sm font-semibold text-white">
@@ -61,8 +61,8 @@
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-3">
-                        <a wire:navigate href="{{ route('articles.index') }}" class="rounded bg-white px-4 py-2 text-sm font-bold text-[#211146]" style="color: #211146 !important;">Review Articles</a>
-                        <a wire:navigate href="{{ route('comments.index') }}" class="rounded border border-white/25 px-4 py-2 text-sm font-bold text-white">Review Comments</a>
+                        <a wire:navigate href="{{ route('articles.index') }}" class="rounded bg-[#14A84D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#0f7a38]">Review Articles</a>
+                        <a wire:navigate href="{{ route('comments.index') }}" class="rounded border border-[#14A84D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#14A84D]">Review Comments</a>
                     </div>
                 </div>
             </section>

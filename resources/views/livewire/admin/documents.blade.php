@@ -161,7 +161,19 @@ new class extends Component {
                                 </td>
                                 <td class="px-5 py-3 text-sm">
                                     <div class="flex gap-3">
-                                        <button type="button" wire:click="edit({{ $document->id }})" class="text-[#14A84D]"><flux:icon.pencil-square class="size-5" /></button>
+                                        <button
+                                            type="button"
+                                            wire:click="edit({{ $document->id }})"
+                                            @class([
+                                                'inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
+                                                'bg-[#14A84D] font-semibold text-white' => $editingId === $document->id,
+                                            ])
+                                        >
+                                            <flux:icon.pencil-square class="size-5" />
+                                            @if ($editingId === $document->id)
+                                                <span>Editing</span>
+                                            @endif
+                                        </button>
                                         <button type="button" wire:click="delete({{ $document->id }})" wire:confirm="Delete this document?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
                                     </div>
                                 </td>

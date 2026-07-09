@@ -73,7 +73,9 @@
             [data-flux-main] .bg-gray-100,
             [data-flux-main] .bg-zinc-50,
             [data-flux-main] .bg-zinc-100 {
-                color: #111429 !important;
+                background-color: rgba(255, 255, 255, 0.06) !important;
+                border-color: rgba(255, 255, 255, 0.12) !important;
+                color: #ffffff !important;
             }
 
             [data-flux-main] .bg-white *,
@@ -81,13 +83,110 @@
             [data-flux-main] .bg-gray-100 *,
             [data-flux-main] .bg-zinc-50 *,
             [data-flux-main] .bg-zinc-100 * {
-                color: #111429 !important;
+                color: inherit !important;
             }
 
             [data-flux-main] .bg-white input,
             [data-flux-main] .bg-white textarea,
             [data-flux-main] .bg-white select {
-                color: #111429 !important;
+                background-color: #0b0d1d !important;
+                border-color: rgba(255, 255, 255, 0.16) !important;
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] [data-flux-button],
+            [data-flux-main] button,
+            [data-flux-main] a[role="button"],
+            [data-flux-main] .cursor-pointer {
+                transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease !important;
+            }
+
+            [data-flux-main] [data-flux-button],
+            [data-flux-main] [data-flux-button][data-variant="primary"],
+            [data-flux-main] button[type="submit"],
+            [data-flux-main] a [data-flux-button] {
+                background-color: #14A84D !important;
+                border-color: #14A84D !important;
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] [data-flux-button]:hover,
+            [data-flux-main] [data-flux-button]:focus-visible,
+            [data-flux-main] [data-flux-button]:active,
+            [data-flux-main] button:hover,
+            [data-flux-main] button:focus-visible,
+            [data-flux-main] button:active,
+            [data-flux-main] a[role="button"]:hover,
+            [data-flux-main] a[role="button"]:focus-visible,
+            [data-flux-main] a[role="button"]:active {
+                background-color: #0f7a38 !important;
+                border-color: #14A84D !important;
+                color: #ffffff !important;
+                box-shadow: 0 0 0 3px rgba(20, 168, 77, 0.28) !important;
+            }
+
+            [data-flux-main] [data-flux-button]:active,
+            [data-flux-main] button:active,
+            [data-flux-main] a[role="button"]:active {
+                transform: translateY(1px);
+            }
+
+            [data-flux-main] [data-flux-button][data-variant="danger"],
+            [data-flux-main] button.text-\[\#E61E5C\],
+            [data-flux-main] .text-\[\#E61E5C\] {
+                color: #ff8bad !important;
+            }
+
+            [data-flux-main] [data-flux-button][data-variant="danger"]:hover,
+            [data-flux-main] [data-flux-button][data-variant="danger"]:focus-visible,
+            [data-flux-main] [data-flux-button][data-variant="danger"]:active {
+                background-color: #14A84D !important;
+                border-color: #14A84D !important;
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] [data-flux-menu],
+            [data-flux-main] [role="menu"],
+            [data-flux-main] [data-flux-select-options],
+            [data-flux-main] [data-flux-dropdown] {
+                background-color: #111429 !important;
+                border-color: rgba(255, 255, 255, 0.14) !important;
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] [data-flux-menu] *,
+            [data-flux-main] [role="menu"] *,
+            [data-flux-main] [data-flux-select-options] * {
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] [data-flux-menu] [data-flux-menu-item]:hover,
+            [data-flux-main] [role="menuitem"]:hover,
+            [data-flux-main] [data-flux-select-option]:hover,
+            [data-flux-main] [data-flux-select-option][data-active] {
+                background-color: #14A84D !important;
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] .ql-toolbar,
+            [data-flux-main] .ql-container,
+            [data-flux-main] .ql-editor {
+                background-color: #0b0d1d !important;
+                border-color: rgba(255, 255, 255, 0.16) !important;
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] .ql-toolbar button,
+            [data-flux-main] .ql-toolbar .ql-picker,
+            [data-flux-main] .ql-toolbar .ql-picker-label {
+                color: #ffffff !important;
+            }
+
+            [data-flux-main] .ql-toolbar button:hover,
+            [data-flux-main] .ql-toolbar button:focus,
+            [data-flux-main] .ql-toolbar button.ql-active,
+            [data-flux-main] .ql-toolbar .ql-picker-label:hover {
+                color: #14A84D !important;
             }
         </style>
     </head>

@@ -371,7 +371,15 @@ new class extends Component {
                                     
                                         @can("category-edit")
                                             <flux:modal.trigger wire:click="edit({{ $advert->id }})" name="update-advert">
-                                                <flux:icon.pencil-square class="size-5 cursor-pointer" color="green" />
+                                                <span @class([
+                                                    'inline-flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
+                                                    'bg-[#14A84D] font-semibold text-white' => $id === $advert->id,
+                                                ])>
+                                                    <flux:icon.pencil-square class="size-5" />
+                                                    @if ($id === $advert->id)
+                                                        <span>Editing</span>
+                                                    @endif
+                                                </span>
                                             </flux:modal.trigger>
                                         @endcan
 
