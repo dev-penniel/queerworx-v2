@@ -2,6 +2,7 @@
 
 use App\Models\TeamMember;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Volt\Component;
 use Livewire\WithFileUploads;
 
@@ -11,6 +12,8 @@ new class extends Component {
     public $memberId = null;
     public $name = '';
     public $role = '';
+    public $bio = '';
+    public $memberType = 'team';
     public $sortOrder = 0;
     public $isActive = true;
     public $photo;
@@ -25,6 +28,8 @@ new class extends Component {
         $validated = $this->validate([
             'name' => 'required|string|max:255',
             'role' => 'required|string|max:255',
+            'bio' => 'nullable|string|max:1000',
+            'memberType' => 'required|in:team,board',
             'sortOrder' => 'required|integer|min:0',
             'isActive' => 'boolean',
             'photo' => 'nullable|image|max:4096',
@@ -40,12 +45,23 @@ new class extends Component {
             $member->photo_path = $this->photo->store('team-members', 'public');
         }
 
-        $member->fill([
+        $attributes = [
             'name' => $validated['name'],
             'role' => $validated['role'],
             'sort_order' => $validated['sortOrder'],
             'is_active' => $validated['isActive'],
-        ]);
+        ];
+
+        // Keep existing profile edits working while a deployment is waiting for its database migration.
+        if (Schema::hasColumn('team_members', 'bio')) {
+            $attributes['bio'] = $validated['bio'];
+        }
+
+        if (Schema::hasColumn('team_members', 'member_type')) {
+            $attributes['member_type'] = $validated['memberType'];
+        }
+
+        $member->fill($attributes);
         $member->save();
 
         $this->resetForm();
@@ -59,6 +75,8 @@ new class extends Component {
         $this->memberId = $member->id;
         $this->name = $member->name;
         $this->role = $member->role;
+        $this->bio = $member->bio;
+        $this->memberType = $member->member_type ?? 'team';
         $this->sortOrder = $member->sort_order;
         $this->isActive = $member->is_active;
         $this->photo = null;
@@ -78,8 +96,9 @@ new class extends Component {
 
     public function resetForm(): void
     {
-        $this->reset(['memberId', 'name', 'role', 'sortOrder', 'isActive', 'photo']);
+        $this->reset(['memberId', 'name', 'role', 'bio', 'memberType', 'sortOrder', 'isActive', 'photo']);
         $this->isActive = true;
+        $this->memberType = 'team';
         $this->sortOrder = 0;
     }
 }; ?>
@@ -99,7 +118,7 @@ new class extends Component {
     <div class="grid gap-6 xl:grid-cols-[360px_1fr]">
         <form wire:submit="saveMember" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
             <flux:heading size="lg">{{ $memberId ? 'Edit team member' : 'Add team member' }}</flux:heading>
-            <flux:text class="mt-1">Add seven active members to fill the public 3-2-2 team layout.</flux:text>
+            <flux:text class="mt-1">Add team or board members. Active profiles appear in the public 3-2-2 layout.</flux:text>
             @if ($memberId)
                 <div class="mt-4 rounded border border-[#14A84D]/30 bg-[#14A84D]/10 px-3 py-2 text-sm font-semibold text-[#0F7A38] dark:text-[#7BE49D]">
                     Editing: {{ $name }}
@@ -109,6 +128,11 @@ new class extends Component {
             <div class="mt-5 space-y-4">
                 <flux:input wire:model="name" label="Full name" />
                 <flux:input wire:model="role" label="Job title / role" />
+                <flux:select wire:model="memberType" label="Profile type">
+                    <flux:select.option value="team">Team member</flux:select.option>
+                    <flux:select.option value="board">Board member</flux:select.option>
+                </flux:select>
+                <flux:textarea wire:model="bio" label="Bio" rows="4" placeholder="Short profile for the public Team or Board page" />
                 <flux:input wire:model="sortOrder" type="number" min="0" label="Display order" />
                 <flux:input wire:model="photo" type="file" label="Profile picture" accept="image/*" />
 
@@ -134,6 +158,7 @@ new class extends Component {
                         <td class="px-5 py-3 text-sm font-bold">Photo</td>
                         <td class="px-5 py-3 text-sm font-bold">Name</td>
                         <td class="px-5 py-3 text-sm font-bold">Role</td>
+                        <td class="px-5 py-3 text-sm font-bold">Type</td>
                         <td class="px-5 py-3 text-sm font-bold">Order</td>
                         <td class="px-5 py-3 text-sm font-bold">Status</td>
                         <td class="px-5 py-3 text-sm font-bold">Actions</td>
@@ -154,6 +179,7 @@ new class extends Component {
                             </td>
                             <td class="px-5 py-3 text-sm font-semibold">{{ $member->name }}</td>
                             <td class="px-5 py-3 text-sm">{{ $member->role }}</td>
+                            <td class="px-5 py-3 text-sm">{{ ucfirst($member->member_type ?? 'team') }}</td>
                             <td class="px-5 py-3 text-sm">{{ $member->sort_order }}</td>
                             <td class="px-5 py-3 text-sm">{{ $member->is_active ? 'Active' : 'Hidden' }}</td>
                             <td class="px-5 py-3 text-sm">
@@ -178,7 +204,7 @@ new class extends Component {
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-8 text-center text-sm text-zinc-500">No team members yet.</td>
+                            <td colspan="7" class="px-5 py-8 text-center text-sm text-zinc-500">No team or board members yet.</td>
                         </tr>
                     @endforelse
                 </tbody>

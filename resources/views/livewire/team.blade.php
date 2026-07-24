@@ -10,6 +10,9 @@ class extends Component {
 
 @php
     $teamMembers = \App\Models\TeamMember::where('is_active', true)
+        ->where(function ($query) {
+            $query->where('member_type', 'team')->orWhereNull('member_type');
+        })
         ->orderBy('sort_order')
         ->latest()
         ->take(7)
@@ -28,8 +31,8 @@ class extends Component {
 
         <div class="relative mx-auto max-w-7xl px-6">
             <div class="mx-auto max-w-3xl text-center">
-                <p class="text-sm font-bold uppercase tracking-wide text-[#E61E5C]">People</p>
-                <h1 class="mt-2 text-4xl font-bold tracking-normal text-white sm:text-5xl">Our Team</h1>
+                <p class="text-sm font-bold uppercase tracking-wide text-[#E61E5C]"></p>
+                <h1 class="mt-2 text-4xl font-bold tracking-normal text-[#E61E5C] sm:text-5xl">Our Team</h1>
                 <p class="mt-4 text-base leading-7 text-white/60">
                     The Queer WorX team leads our day-to-day community, advocacy, wellness, and economic empowerment work.
                 </p>
@@ -53,6 +56,9 @@ class extends Component {
 
                                     <h2 class="mt-5 text-xl font-bold text-white">{{ $member->name }}</h2>
                                     <p class="mt-2 text-sm font-semibold text-[#FFD83D]">{{ $member->role }}</p>
+                                    @if ($member->bio)
+                                        <p class="mt-3 text-sm leading-6 text-white/65">{{ $member->bio }}</p>
+                                    @endif
                                 </article>
                             @endforeach
                         </div>

@@ -62,61 +62,20 @@ class extends Component {
 @endphp
 
 <div class="bg-[#111429]">
-<section id="governance" class="relative overflow-hidden py-20 sm:py-24">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(77,61,145,0.28),transparent_42%),linear-gradient(180deg,#1b1740_0%,#111429_100%)]"></div>
+<section class="relative overflow-hidden py-20 sm:py-24">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(45,93,202,0.15),transparent_38%),linear-gradient(180deg,#111429_0%,#0e0f20_100%)]"></div>
 
-    <div class="relative mx-auto max-w-7xl px-6">
-        <div class="mx-auto max-w-3xl text-center">
-            <h1 class="inline-flex items-end justify-center gap-2 text-left font-serif italic leading-none text-[#111429] [text-shadow:0_2px_0_rgba(255,255,255,0.9)] [-webkit-text-stroke:1.5px_white] sm:gap-3">
-                <span class="text-7xl sm:text-8xl">
-                    <span class="bg-[linear-gradient(180deg,#E61E5C_0%,#FFD83D_32%,#14A84D_56%,#149CB9_76%,#7646E8_100%)] bg-clip-text text-transparent [-webkit-text-stroke:1.5px_white]">
-                </span>
-                <span class="mb-1 block text-4xl not-italic leading-[0.82] text-white font-semibold [-webkit-text-stroke:0] [text-shadow:0_2px_0_rgba(0,0,0,0.45)] sm:mb-2 sm:text-5xl">
-                    Overview
-                </span>
-            </h1>
-
-            <p class="mt-3 text-base  text-white sm:text-lg">
-               Driven by the urgent need to address economic exclusion within the LGBTQ+ community, Queer WorX was founded to bridge the critical gap in services and support specifically tailored to our needs. Economic advancement is crucial for achieving true equality, enabling individuals to live independently, support their families, and contribute meaningfully to society. The transformative impact of economic empowerment on the lives of LGBTIQ+ individuals fuels our passion for advocating for policies, programs, and initiatives that break down barriers and create inclusive economic opportunities.
+    <div class="relative mx-auto max-w-5xl px-6">
+        <div class="max-w-4xl text-left">
+            <p class="text-sm font-extrabold uppercase tracking-[0.28em] text-[#9eabd1]"></p>
+            <h1 class="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">Who we are</h1>
+            <div class="mt-4 h-1 w-16 rounded-full bg-[#2e71ff]"></div>
+            <p class="mt-7 text-lg leading-8 text-white/75">
+                Queer WorX is a queer Basotho-led non-profit organisation advancing the rights, well-being and economic inclusion of LGBTIQ+ people in Lesotho. Founded in 2020 and incorporated under the Companies Act 2011 in 2025, we grew from a simple conviction: that LGBTIQ+ people in Lesotho deserve more than survival; they deserve to thrive, economically and socially.
             </p>
-        </div>
-
-        <div class="mt-14 grid gap-6 lg:grid-cols-2">
-            <article class="relative overflow-hidden rounded-[8px] border border-white/10 bg-black/30 p-7 shadow-2xl shadow-black/20 sm:p-9">
-                <div class="absolute inset-x-0 bottom-0 h-1 bg-[linear-gradient(90deg,#E61E5C_0%,#F05A12_18%,#FFD83D_34%,#14A84D_52%,#149CB9_72%,#7646E8_100%)]"></div>
-
-                <div class="flex items-center gap-4">
-                    <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#E61E5C_0%,#FFD83D_32%,#14A84D_54%,#149CB9_74%,#7646E8_100%)] text-2xl text-white shadow-lg shadow-purple-900/30">
-                        <i class="fa-solid fa-bullseye"></i>
-                    </span>
-
-                    <h2 class="rounded-full bg-[linear-gradient(90deg,#FF5A77_0%,#FFD83D_32%,#14A84D_54%,#149CB9_74%,#7646E8_100%)] px-8 py-2 text-3xl font-bold text-[#111429] shadow-lg shadow-black/20">
-                        Mission
-                    </h2>
-                </div>
-
-                <p class="mt-7 text-lg font-normal leading-7 text-white/90 sm:text-xl sm:leading-8">
-                    Queer WorX's mission is to build an inclusive and economically resilient LGBTIQ+ community in Lesotho by advancing human capital, fostering self-sufficiency, and supporting holistic wellness through education, mentorship, and sustainable livelihood initiatives.
-                </p>
-            </article>
-
-            <article class="relative overflow-hidden rounded-[8px] border border-white/10 bg-black/30 p-7 shadow-2xl shadow-black/20 sm:p-9">
-                <div class="absolute inset-x-0 bottom-0 h-1 bg-[linear-gradient(90deg,#E61E5C_0%,#F05A12_18%,#FFD83D_34%,#14A84D_52%,#149CB9_72%,#7646E8_100%)]"></div>
-
-                <div class="flex items-center gap-4">
-                    <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#E61E5C_0%,#FFD83D_32%,#14A84D_54%,#149CB9_74%,#7646E8_100%)] text-2xl text-white shadow-lg shadow-purple-900/30">
-                        <i class="fa-solid fa-eye"></i>
-                    </span>
-
-                    <h2 class="rounded-full bg-[linear-gradient(90deg,#FF5A77_0%,#FFD83D_32%,#14A84D_54%,#149CB9_74%,#7646E8_100%)] px-8 py-2 text-3xl font-bold text-[#111429] shadow-lg shadow-black/20">
-                        Our Vision
-                    </h2>
-                </div>
-
-                <p class="mt-7 text-lg font-normal leading-7 text-white/90 sm:text-xl sm:leading-8">
-                    Queer WorX envisions a Lesotho where all LGBTIQ+ individuals achieve their full potential, living with dignity, freedom, and economic prosperity, and contributing fully to a vibrant and inclusive nation.
-                </p>
-            </article>
+            <p class="mt-8 border-l-4 border-[#2e71ff] pl-6 text-lg leading-8 text-white/70">
+                We hold that conviction without setting ourselves apart from anyone else. LGBTIQ+ Basotho are not a question separate from the nation; we are part of its social fabric. Beyond our identities, we are citizens of this country and of this earth, shaped by the same poverty, unemployment and barriers to opportunity that touch every Mosotho's life, and contributors to the same shared future. Our work is therefore intersectional by necessity: it meets queerness where it overlaps with gender, class, disability and geography, and it stands in solidarity with the wider struggle for a just society, rather than in isolation from it.
+            </p>
         </div>
     </div>
 </section>
@@ -208,6 +167,53 @@ class extends Component {
                 @endforeach
             </div>
         </div>
+    </div>
+</section>
+
+<section class="bg-[#0e0f20] py-16 text-white sm:py-20">
+    <div class="mx-auto max-w-7xl px-6">
+        <div class="grid gap-6 lg:grid-cols-2">
+            <article class="rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 sm:p-8">
+                <div class="flex items-center gap-4">
+                    <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#7c36ef]/20 text-[#ad83ff]"><i class="fa-solid fa-bullseye"></i></span>
+                    <div>
+                        <h2 class="text-2xl font-bold">Mission</h2>
+                        <div class="mt-2 h-1 w-[72px] rounded-full bg-[linear-gradient(90deg,#e61e5c,#f0b31a,#14a84d,#2e71ff,#7c36ef)]"></div>
+                    </div>
+                </div>
+                <p class="mt-6 text-lg leading-8 text-white/70">To advance an inclusive and economically resilient LGBTIQ+ community in Lesotho by promoting economic and social inclusion, strengthening human capital, and supporting sustainable livelihoods and holistic wellness.</p>
+            </article>
+
+            <article class="rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 sm:p-8">
+                <div class="flex items-center gap-4">
+                    <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#7c36ef]/20 text-[#ad83ff]"><i class="fa-solid fa-eye"></i></span>
+                    <div>
+                        <h2 class="text-2xl font-bold">Our vision</h2>
+                        <div class="mt-2 h-1 w-[72px] rounded-full bg-[linear-gradient(90deg,#e61e5c,#f0b31a,#14a84d,#2e71ff,#7c36ef)]"></div>
+                    </div>
+                </div>
+                <p class="mt-6 text-lg leading-8 text-white/70">A Lesotho where all LGBTIQ+ individuals achieve their full potential, living with dignity, freedom and economic prosperity, and contributing fully to a vibrant, inclusive nation.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+
+        <article class="mt-6 rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 sm:p-8">
+            <h2 class="text-2xl font-bold">Our values</h2>
+            <p class="mt-1 text-white/55">Institutional values · how we govern and hold ourselves</p>
+            <div class="mt-4 flex flex-wrap gap-3">
+                @foreach ([['Dignity', '#2e71ff'], ['Accountability', '#149cb9'], ['Evidence', '#14a84d'], ['Sustainability', '#d98608'], ['Solidarity', '#e61e5c']] as [$value, $color])
+                    <span class="rounded-full border px-5 py-1.5 text-sm font-medium" style="border-color: {{ $color }}; color: {{ $color }};">{{ $value }}</span>
+                @endforeach
+            </div>
+            <p class="mt-5 text-white/55">Practice principles — LIGHT-IDEA · how we show up every day</p>
+            <div class="mt-3 flex flex-wrap gap-3">
+                @foreach (['Love', 'Inclusion', 'Growth', 'Humanity', 'Trust', 'Intersectionality', 'Diversity', 'Empowerment', 'Advocacy'] as $value)
+                    <span class="rounded-full border border-[#6a37b6] bg-[#3a1b69]/25 px-5 py-1.5 text-sm font-medium text-[#d5bbff]">{{ $value }}</span>
+                @endforeach
+            </div>
+        </article>
     </div>
 </section>
 

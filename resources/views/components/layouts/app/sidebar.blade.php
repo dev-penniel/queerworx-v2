@@ -217,6 +217,8 @@
 
                     <flux:navlist.item icon="identification" :href="route('admin.team-members')" :current="request()->routeIs('admin.team-members')" wire:navigate>{{ __('Team Members') }}</flux:navlist.item>
 
+                    <flux:navlist.item icon="building-office-2" :href="route('admin.partners')" :current="request()->routeIs('admin.partners')" wire:navigate>{{ __('Partners') }}</flux:navlist.item>
+
                     <flux:navlist.item icon="user-group" :href="route('admin.join-us')" :current="request()->routeIs('admin.join-us')" wire:navigate>{{ __('Join Us Page') }}</flux:navlist.item>
 
                     <flux:navlist.item icon="radio" :href="route('admin.support')" :current="request()->routeIs('admin.support')" wire:navigate>{{ __('Support Page') }}</flux:navlist.item>

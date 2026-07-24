@@ -64,6 +64,7 @@ Route::middleware(['auth'])->group(function(){
     Volt::route('admin/documents', 'admin.documents')->name('admin.documents');
     Volt::route('admin/programs', 'admin.programs')->name('admin.programs');
     Volt::route('admin/team-members', 'admin.team-members')->name('admin.team-members');
+    Volt::route('admin/partners', 'admin.partners')->name('admin.partners');
     Volt::route('admin/join-us', 'admin.join-us')->name('admin.join-us');
     Volt::route('admin/support', 'admin.support')->name('admin.support');
      
