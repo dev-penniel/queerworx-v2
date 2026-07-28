@@ -31,8 +31,13 @@ new class extends Component {
                         <a href="{{ $ad->url }}" target="_blank"
                            class="absolute inset-0 transition-all duration-1000 ease-in-out"
                            :class="{ 'opacity-100': active === {{ $index }}, 'opacity-0': active !== {{ $index }} }">
-                            <img src="{{ $ad->thumbnail }}" alt="{{ $ad->title }}"
-                                 class="w-full h-full object-cover rounded-xl" />
+                            @if ($ad->video_path)
+                                <video src="{{ route('media.show', ['path' => $ad->video_path]) }}" class="h-full w-full rounded-xl object-cover" autoplay muted loop playsinline></video>
+                            @elseif ($ad->thumbnail)
+                                <img src="{{ route('media.show', ['path' => $ad->thumbnail]) }}" alt="{{ $ad->title }}" class="h-full w-full rounded-xl object-cover" />
+                            @else
+                                <span class="flex h-full items-center justify-center bg-gray-800 text-sm text-white">{{ $ad->title }}</span>
+                            @endif
                         </a>
                     @endforeach
                 </div>
@@ -44,4 +49,3 @@ new class extends Component {
         </div>
     </div>
 </div>
-

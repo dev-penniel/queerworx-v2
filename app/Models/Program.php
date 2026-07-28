@@ -10,6 +10,7 @@ class Program extends Model
     protected $fillable = [
         'name',
         'summary',
+        'outcomes',
         'cover_image_path',
         'color',
         'sort_order',

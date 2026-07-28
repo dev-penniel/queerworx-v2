@@ -30,7 +30,7 @@ class extends Component {
                 @forelse ($partners as $partner)
                     <article class="group rounded-[8px] border border-white/10 bg-white/[0.05] p-5 text-center shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:border-[#E61E5C]/50">
                         @if ($partner->website_url)
-                            <a href="{{ $partner->website_url }}" target="_blank" rel="noopener noreferrer" class="block" aria-label="Visit {{ $partner->name }}">
+                            <a href="{{ $partner->website_url }}" target="_blank" rel="noopener noreferrer" class="block cursor-pointer" aria-label="Visit {{ $partner->name }}">
                         @endif
                             <div class="mx-auto flex aspect-square w-full max-w-[240px] items-center justify-center overflow-hidden rounded-[8px] bg-white p-5">
                                 @if ($partner->logo_path)
@@ -43,9 +43,6 @@ class extends Component {
                             </a>
                         @endif
                         <h2 class="mt-5 text-xl font-bold text-white">{{ $partner->name }}</h2>
-                        @if ($partner->website_url)
-                            <a href="{{ $partner->website_url }}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex text-sm font-semibold text-[#FFD83D] transition hover:text-white">Visit website ↗</a>
-                        @endif
                     </article>
                 @empty
                     <div class="col-span-full rounded-[8px] border border-white/10 bg-white/[0.05] p-8 text-center text-white/60">

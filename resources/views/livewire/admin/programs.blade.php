@@ -12,6 +12,7 @@ new class extends Component {
 
     public $programName = '';
     public $programSummary = '';
+    public $programOutcomes = '';
     public $programSortOrder = 0;
     public $programCoverImage;
     public $programId = null;
@@ -43,6 +44,7 @@ new class extends Component {
         $validated = $this->validate([
             'programName' => 'required|string|max:255',
             'programSummary' => 'nullable|string',
+            'programOutcomes' => 'nullable|string|max:2000',
             'programSortOrder' => 'nullable|integer|min:0',
             'programCoverImage' => 'nullable|image|max:8192',
         ]);
@@ -60,6 +62,7 @@ new class extends Component {
         $program->fill([
             'name' => $validated['programName'],
             'summary' => $validated['programSummary'] ?: null,
+            'outcomes' => $validated['programOutcomes'] ?: null,
             'sort_order' => $validated['programSortOrder'] ?? 0,
             'is_active' => true,
         ]);
@@ -76,6 +79,7 @@ new class extends Component {
         $this->programId = $program->id;
         $this->programName = $program->name;
         $this->programSummary = $program->summary;
+        $this->programOutcomes = $program->outcomes;
         $this->programSortOrder = $program->sort_order;
         $this->programCoverImage = null;
     }
@@ -203,7 +207,7 @@ new class extends Component {
 
     public function resetProgramForm(): void
     {
-        $this->reset(['programName', 'programSummary', 'programSortOrder', 'programCoverImage', 'programId']);
+        $this->reset(['programName', 'programSummary', 'programOutcomes', 'programSortOrder', 'programCoverImage', 'programId']);
         $this->programSortOrder = 0;
     }
 
@@ -244,6 +248,9 @@ new class extends Component {
                 <flux:input wire:model="programSortOrder" type="number" min="0" label="Display order" />
                 <div class="sm:col-span-2">
                     <flux:textarea wire:model="programSummary" label="Short description" rows="4" />
+                </div>
+                <div class="sm:col-span-2">
+                    <flux:textarea wire:model="programOutcomes" label="Programme outcomes" rows="4" placeholder="What this programme achieves for the community" />
                 </div>
                 <div class="sm:col-span-2">
                     <flux:input wire:model="programCoverImage" type="file" label="Program cover image" accept="image/*" />

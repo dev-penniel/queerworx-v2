@@ -55,12 +55,6 @@ class extends Component {
 @php
     $supportSettings = SupportPageSetting::first();
     $supporterCount = Subscriber::where('interest', 'like', 'Support:%')->count();
-    $impactStats = [
-        ['value' => \App\Models\Subscriber::count(), 'label' => 'Lives Empowered'],
-        ['value' => \App\Models\Program::count() + \App\Models\ProgramActivity::count(), 'label' => 'Programs & Events'],
-        ['value' => \App\Models\Subscriber::where('interest', 'Support: Volunteer')->count(), 'label' => 'Volunteers'],
-        ['value' => \App\Models\Subscriber::where('interest', 'Support: Partner')->count(), 'label' => 'Partner Organizations'],
-    ];
 @endphp
 
 <main class="min-h-screen bg-[#111429] text-white">
@@ -135,26 +129,6 @@ class extends Component {
                     </article>
                 @endforeach
             </div>
-        </div>
-    </section>
-
-    <section class="bg-[#0e0f20] py-2 pb-16 text-white sm:pb-20">
-        <div class="mx-auto max-w-7xl px-6">
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-white">Your impact</h2>
-                <div class="mx-auto mt-3 h-1 w-16 rounded-full bg-[#e61e5c]"></div>
-            </div>
-            <div class="mt-10 grid gap-6 text-center md:grid-cols-4">
-                @foreach ($impactStats as $impact)
-                    <div class="rounded-[18px] border border-[#e61e5c]/65 bg-[#1a1a31] p-7 shadow-lg shadow-black/10">
-                        <p class="text-4xl font-bold text-pink-300">{{ number_format($impact['value']) }}</p>
-                        <p class="mt-2 text-sm font-semibold text-white/80">{{ $impact['label'] }}</p>
-                    </div>
-                @endforeach
-            </div>
-            <p class="mt-8 text-center text-sm font-semibold text-white/75">
-                <span class="text-[#E61E5C]">&hearts;</span> Together, we are building a more inclusive tomorrow.
-            </p>
         </div>
     </section>
 

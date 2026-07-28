@@ -61,10 +61,8 @@ class extends Component {
     ];
 @endphp
 
-<div class="bg-[#111429]">
+<div class="bg-[#1b1740] text-white">
 <section class="relative overflow-hidden py-20 sm:py-24">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(45,93,202,0.15),transparent_38%),linear-gradient(180deg,#111429_0%,#0e0f20_100%)]"></div>
-
     <div class="relative mx-auto max-w-5xl px-6">
         <div class="max-w-4xl text-left">
             <p class="text-sm font-extrabold uppercase tracking-[0.28em] text-[#9eabd1]"></p>
@@ -81,8 +79,6 @@ class extends Component {
 </section>
 
 <section class="relative overflow-hidden py-20 sm:py-24">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(77,61,145,0.28),transparent_42%),linear-gradient(180deg,#1b1740_0%,#111429_100%)]"></div>
-
     <div class="relative mx-auto max-w-7xl px-6">
         <div class="text-center">
             <h1 class="text-4xl font-bold tracking-normal text-white sm:text-5xl">
@@ -170,10 +166,10 @@ class extends Component {
     </div>
 </section>
 
-<section class="bg-[#0e0f20] py-16 text-white sm:py-20">
+<section class="py-16 sm:py-20">
     <div class="mx-auto max-w-7xl px-6">
         <div class="grid gap-6 lg:grid-cols-2">
-            <article class="rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 sm:p-8">
+            <article class="rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 transition duration-300 hover:-translate-y-1 hover:border-[#ad83ff] hover:bg-[#211d47] sm:p-8">
                 <div class="flex items-center gap-4">
                     <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#7c36ef]/20 text-[#ad83ff]"><i class="fa-solid fa-bullseye"></i></span>
                     <div>
@@ -184,7 +180,7 @@ class extends Component {
                 <p class="mt-6 text-lg leading-8 text-white/70">To advance an inclusive and economically resilient LGBTIQ+ community in Lesotho by promoting economic and social inclusion, strengthening human capital, and supporting sustainable livelihoods and holistic wellness.</p>
             </article>
 
-            <article class="rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 sm:p-8">
+            <article class="rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 transition duration-300 hover:-translate-y-1 hover:border-[#ad83ff] hover:bg-[#211d47] sm:p-8">
                 <div class="flex items-center gap-4">
                     <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#7c36ef]/20 text-[#ad83ff]"><i class="fa-solid fa-eye"></i></span>
                     <div>
@@ -195,22 +191,19 @@ class extends Component {
                 <p class="mt-6 text-lg leading-8 text-white/70">A Lesotho where all LGBTIQ+ individuals achieve their full potential, living with dignity, freedom and economic prosperity, and contributing fully to a vibrant, inclusive nation.</p>
             </article>
         </div>
-    </div>
-</section>
 
-
-        <article class="mt-6 rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 sm:p-8">
+        <article class="mt-6 rounded-[18px] border border-[#343451] bg-[#1a1a31] p-7 transition duration-300 hover:-translate-y-1 hover:border-[#ad83ff] hover:bg-[#211d47] sm:p-8">
             <h2 class="text-2xl font-bold">Our values</h2>
             <p class="mt-1 text-white/55">Institutional values · how we govern and hold ourselves</p>
             <div class="mt-4 flex flex-wrap gap-3">
                 @foreach ([['Dignity', '#2e71ff'], ['Accountability', '#149cb9'], ['Evidence', '#14a84d'], ['Sustainability', '#d98608'], ['Solidarity', '#e61e5c']] as [$value, $color])
-                    <span class="rounded-full border px-5 py-1.5 text-sm font-medium" style="border-color: {{ $color }}; color: {{ $color }};">{{ $value }}</span>
+                    <span class="cursor-default rounded-full border px-5 py-1.5 text-sm font-medium transition duration-300 hover:-translate-y-1 hover:scale-105 hover:bg-white/20 hover:shadow-[0_0_22px_rgba(255,255,255,0.32)]" style="border-color: {{ $color }}; color: {{ $color }};">{{ $value }}</span>
                 @endforeach
             </div>
             <p class="mt-5 text-white/55">Practice principles — LIGHT-IDEA · how we show up every day</p>
             <div class="mt-3 flex flex-wrap gap-3">
                 @foreach (['Love', 'Inclusion', 'Growth', 'Humanity', 'Trust', 'Intersectionality', 'Diversity', 'Empowerment', 'Advocacy'] as $value)
-                    <span class="rounded-full border border-[#6a37b6] bg-[#3a1b69]/25 px-5 py-1.5 text-sm font-medium text-[#d5bbff]">{{ $value }}</span>
+                    <span class="cursor-default rounded-full border border-[#6a37b6] bg-[#3a1b69]/25 px-5 py-1.5 text-sm font-medium text-[#d5bbff] transition duration-300 hover:-translate-y-1 hover:scale-105 hover:border-white hover:bg-[#7646E8] hover:text-white hover:shadow-[0_0_24px_rgba(173,131,255,0.8)]">{{ $value }}</span>
                 @endforeach
             </div>
         </article>

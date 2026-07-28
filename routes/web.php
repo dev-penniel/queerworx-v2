@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -24,6 +25,12 @@ Volt::route('policies', 'policies')->name('policies');
 Volt::route('team', 'team')->name('team');
 Volt::route('board', 'board')->name('board');
 Volt::route('partners', 'partners')->name('partners');
+
+Route::get('media/{path}', function (string $path) {
+    abort_unless(Storage::disk('public')->exists($path), 404);
+
+    return Storage::disk('public')->response($path);
+})->where('path', '.*')->name('media.show');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

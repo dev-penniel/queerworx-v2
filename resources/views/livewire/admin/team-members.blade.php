@@ -29,7 +29,7 @@ new class extends Component {
             'name' => 'required|string|max:255',
             'role' => 'required|string|max:255',
             'bio' => 'nullable|string|max:1000',
-            'memberType' => 'required|in:team,board',
+            'memberType' => 'required|in:team,board,advisory',
             'sortOrder' => 'required|integer|min:0',
             'isActive' => 'boolean',
             'photo' => 'nullable|image|max:4096',
@@ -118,7 +118,7 @@ new class extends Component {
     <div class="grid gap-6 xl:grid-cols-[360px_1fr]">
         <form wire:submit="saveMember" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
             <flux:heading size="lg">{{ $memberId ? 'Edit team member' : 'Add team member' }}</flux:heading>
-            <flux:text class="mt-1">Add team or board members. Active profiles appear in the public 3-2-2 layout.</flux:text>
+            <flux:text class="mt-1">Add team, board, or Community Advisory members. Active board and advisory profiles appear in the public pyramid layout.</flux:text>
             @if ($memberId)
                 <div class="mt-4 rounded border border-[#14A84D]/30 bg-[#14A84D]/10 px-3 py-2 text-sm font-semibold text-[#0F7A38] dark:text-[#7BE49D]">
                     Editing: {{ $name }}
@@ -131,6 +131,7 @@ new class extends Component {
                 <flux:select wire:model="memberType" label="Profile type">
                     <flux:select.option value="team">Team member</flux:select.option>
                     <flux:select.option value="board">Board member</flux:select.option>
+                    <flux:select.option value="advisory">Community Advisory member</flux:select.option>
                 </flux:select>
                 <flux:textarea wire:model="bio" label="Bio" rows="4" placeholder="Short profile for the public Team or Board page" />
                 <flux:input wire:model="sortOrder" type="number" min="0" label="Display order" />
@@ -172,7 +173,7 @@ new class extends Component {
                         ])>
                             <td class="px-5 py-3 text-sm">
                                 @if ($member->photo_path)
-                                    <img src="{{ Storage::url($member->photo_path) }}" alt="{{ $member->name }}" class="h-7 w-7 rounded-full object-cover">
+                                    <img src="{{ route('media.show', ['path' => $member->photo_path]) }}" alt="{{ $member->name }}" class="h-7 w-7 rounded-full object-cover">
                                 @else
                                     <span class="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 text-[9px] font-bold text-zinc-600">No img</span>
                                 @endif

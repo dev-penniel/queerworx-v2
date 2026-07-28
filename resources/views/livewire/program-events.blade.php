@@ -44,6 +44,12 @@ class extends Component {
                 @if ($program->summary)
                     <p class="mt-4 text-base leading-7 text-white/65">{{ $program->summary }}</p>
                 @endif
+                @if ($program->outcomes)
+                    <div class="mt-6 border-l-4 border-[#E61E5C] pl-5 text-base leading-7 text-white/65">
+                        <p class="text-sm font-bold uppercase tracking-wide text-pink-300">Programme outcomes</p>
+                        <p class="mt-2">{{ $program->outcomes }}</p>
+                    </div>
+                @endif
             </div>
         </div>
     </section>

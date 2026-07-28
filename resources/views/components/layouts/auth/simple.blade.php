@@ -5,15 +5,15 @@
         <style>
             body,
             [data-flux-heading],
-            [data-flux-subheading],
-            label {
+            label,
+            [data-flux-label] {
                 color: #ffffff !important;
             }
 
             [data-flux-subheading],
             .text-zinc-600,
             .dark\:text-zinc-400 {
-                color: rgba(255, 255, 255, 0.72) !important;
+                color: #d8d9ec !important;
             }
 
             input,
@@ -22,18 +22,42 @@
             [data-flux-input],
             [data-flux-control] {
                 background-color: #0b0d1d !important;
-                border-color: rgba(255, 255, 255, 0.16) !important;
+                border-color: rgba(220, 220, 255, 0.32) !important;
                 color: #ffffff !important;
+            }
+
+            input:focus,
+            select:focus,
+            textarea:focus,
+            [data-flux-input]:focus-within,
+            [data-flux-control]:focus-within {
+                border-color: #b18aff !important;
+                box-shadow: 0 0 0 3px rgba(177, 138, 255, 0.28) !important;
             }
 
             input::placeholder,
             textarea::placeholder {
-                color: rgba(255, 255, 255, 0.48) !important;
+                color: #a8aac3 !important;
             }
 
             a,
             [data-flux-link] {
-                color: #d8c7ff !important;
+                color: #e2d5ff !important;
+                font-weight: 600;
+                text-decoration: underline;
+                text-underline-offset: 3px;
+            }
+
+            [data-flux-error],
+            .text-red-500,
+            .text-red-600 {
+                color: #ffb4c7 !important;
+            }
+
+            .auth-card {
+                background-color: #1a1a31 !important;
+                border-color: rgba(220, 220, 255, 0.22) !important;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42) !important;
             }
 
             button,
@@ -66,9 +90,9 @@
             <div class="flex w-full max-w-sm flex-col gap-2">
                 <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
                     <img
-                        src="{{ asset('images/qw-logo-latest-trimmed.png') }}"
+                        src="{{ asset('images/1df067aa-d966-491f-a61e-bdfc572c0075.png') }}"
                         alt="Queer WorX"
-                        class="h-16 w-auto object-contain"
+                        class="h-20 w-auto max-w-[240px] object-contain sm:h-24"
                     >
                 </a>
                 <div class="flex flex-col gap-6">

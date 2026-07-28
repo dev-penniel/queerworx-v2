@@ -1,6 +1,7 @@
 <?php
 use Livewire\Volt\Component;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Advert;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
@@ -11,7 +12,7 @@ new class extends Component {
     
     use WithPagination, WithFileUploads;
     
-    public $title, $thumbnail, $url, $position, $search, $id, $currentThumbnail, $thumbnailToRemove;
+    public $title, $thumbnail, $video, $url, $position, $search, $id, $currentThumbnail, $currentVideo, $thumbnailToRemove;
 
         public function getAdvertsProperty()
         {
@@ -25,9 +26,10 @@ new class extends Component {
         {
             $validated = $this->validate([
                 'title' => "required|string",
-                'url' => "required|string",
+                'url' => "required|url|max:2048",
                 'position' => "required|integer",
                 'thumbnail' => 'nullable|image|max:2048',
+                'video' => 'nullable|file|mimetypes:video/mp4,video/webm,video/quicktime|max:51200',
             ]);
 
             $thumbnailPath = null;
@@ -37,11 +39,14 @@ new class extends Component {
                 $thumbnailPath = $this->thumbnail->store('images/adverts', 'public');
             }
 
+            $videoPath = $this->video ? $this->video->store('adverts', 'public') : null;
+
             Advert::create([
                 'title' => $validated['title'],
                 'url' => $validated['url'],
                 'position' => $validated['position'],
                 'thumbnail' => $thumbnailPath,
+                'video_path' => $videoPath,
             ]);
 
             $this->reset();
@@ -58,6 +63,9 @@ new class extends Component {
             $this->url = $advert->url;
             $this->position = $advert->position;
             $this->currentThumbnail = $advert->thumbnail;
+            $this->currentVideo = $advert->video_path;
+            $this->thumbnail = null;
+            $this->video = null;
 
         }
 
@@ -65,9 +73,10 @@ new class extends Component {
         {
             $validated = $this->validate([
                 'title' => "required|string",
-                'url' => "required|string",
+                'url' => "required|url|max:2048",
                 'position' => "required|integer",
                 'thumbnail' => 'nullable|image|max:2048',
+                'video' => 'nullable|file|mimetypes:video/mp4,video/webm,video/quicktime|max:51200',
             ]);
 
             $advert = Advert::findOrFail($id);
@@ -92,11 +101,19 @@ new class extends Component {
                 $thumbnailPath = null;
             }
 
+            $videoPath = $this->currentVideo;
+
+            if ($this->video) {
+                Storage::disk('public')->delete(array_filter([$this->currentVideo]));
+                $videoPath = $this->video->store('adverts', 'public');
+            }
+
             $advert->update([
                 'title' => $validated['title'],
                 'url' => $validated['url'],
                 'position' => $validated['position'],
                 'thumbnail' => $thumbnailPath,
+                'video_path' => $videoPath,
             ]);
 
             $this->dispatch('advert-updated');
@@ -107,6 +124,7 @@ new class extends Component {
         public function delete($id)
         {
             $advert = Advert::findOrFail($id);
+            Storage::disk('public')->delete(array_filter([$advert->thumbnail, $advert->video_path]));
             $advert->delete();
             $this->dispatch('advert-deleted', $id);
         }
@@ -124,7 +142,7 @@ new class extends Component {
 <div>
     {{-- Create category modal --}}
     <flux:modal name="create-advert" class="md:w-96">
-        <form wire:submit.ignore="create">
+        <form wire:submit="create">
             <div class="space-y-6">
                 <div>
                     <flux:heading size="lg">Add New Advert</flux:heading>
@@ -175,6 +193,9 @@ new class extends Component {
                     </div>
                 </div>
 
+                <flux:input wire:model="video" type="file" label="Advert video (optional, MP4, WebM, or MOV; max 50MB)" accept="video/mp4,video/webm,video/quicktime" />
+                @error('video') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
+
     
                 <div class="flex">
                     <flux:spacer />
@@ -198,7 +219,7 @@ new class extends Component {
 
     {{-- Create category modal --}}
     <flux:modal name="update-advert" class="md:w-96">
-        <form wire:submit.ignore="update({{ $id }})">
+        <form wire:submit="update({{ $id }})">
             <div class="space-y-6">
                 <div>
                     <flux:heading size="lg">Update Advert</flux:heading>
@@ -257,7 +278,7 @@ new class extends Component {
                         @if ($thumbnail == null && $currentThumbnail !== null)
                             <div class="mt-2">
                                 <span class="block text-sm font-medium text-gray-700 mb-1">Current Cover Image:</span>
-                                <img src="{{ Storage::url($currentThumbnail)}}" class="h-40 w-full object-cover rounded-md">
+                                <img src="{{ route('media.show', ['path' => $currentThumbnail]) }}" class="h-40 w-full object-cover rounded-md">
                                 <button type="button" wire:click="removeCoverImage" 
                                         class="mt-2 text-sm text-red-600 hover:text-red-800 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,6 +290,12 @@ new class extends Component {
                         @endif
                     </div>
                 </div>
+
+                <flux:input wire:model="video" type="file" label="Replace advert video (optional, MP4, WebM, or MOV; max 50MB)" accept="video/mp4,video/webm,video/quicktime" />
+                @if ($currentVideo)
+                    <p class="text-sm text-zinc-500">A video is currently attached. Uploading a new one will replace it.</p>
+                @endif
+                @error('video') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
 
     
                 <div class="flex">
@@ -308,11 +335,9 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            @can("category-create")
-                <flux:modal.trigger name="create-advert">
-                    <flux:button class="cursor-pointer">Add</flux:button>
-                </flux:modal.trigger>
-            @endcan
+            <flux:modal.trigger name="create-advert">
+                <flux:button class="cursor-pointer">Add advert</flux:button>
+            </flux:modal.trigger>
 
                 
 
@@ -355,7 +380,7 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm whitespace-nowrap">
                             @if ($advert->thumbnail)
                                 <div class="mt-2">
-                                    <img src="{{ Storage::url($advert->thumbnail) }}" class="h-15 w-30 object-cover rounded-md">
+                                    <img src="{{ route('media.show', ['path' => $advert->thumbnail]) }}" class="h-15 w-30 object-cover rounded-md">
                                 </div>
                             @endif
                         </td>
