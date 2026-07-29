@@ -85,16 +85,21 @@
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200 min-h-screen" x-data="{ mobileMenu: false, searchOpen: false, aboutMenu: false, eventsMenu: false, programsMenu: false, darkMode: true }">
+    @php
+        $navPrograms = \App\Models\Program::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+    @endphp
+
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-gray-800 shadow-lg">
         <div class="container mx-auto px-8 py-8 max-w-7xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <a wire:navigate href="{{ route('home') }}" class="flex items-center space-x-2">
-                        <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
-                            <span class="text-white font-bold text-xl">Q</span>
-                        </div>
-                        <span class="text-xl font-bold">Queer<span class="text-purple-500">Worx</span></span>
+                    <a wire:navigate href="{{ route('home') }}" class="flex items-center">
+                        <img
+                            src="{{ asset('images/1df067aa-d966-491f-a61e-bdfc572c0075.png') }}"
+                            alt="Queer WorX"
+                            class="h-20 w-auto object-contain md:h-24"
+                        >
                     </a>
                 </div>
 
@@ -132,6 +137,7 @@
                             <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
                                 <a href="{{ route('team') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#E61E5C]">Team</a>
                                 <a href="{{ route('board') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#D98608]">Board</a>
+                                <a href="{{ route('partners') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#7646E8]">Partners</a>
                                 <a href="{{ route('policies') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#14A84D]">Policies</a>
                                 <a href="{{ route('financials') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#149CB9]">Financials</a>
                             </div>
@@ -148,15 +154,16 @@
                     <div
                         class="relative"
                         @mouseenter="eventsMenu = true"
-                        @mouseleave="eventsMenu = false; programsMenu = false"
+                        @mouseleave="eventsMenu = false"
                     >
                         <a
-                            href="{{ route('events') }}"
-                            class="inline-flex items-center gap-2 transition {{ request()->routeIs('events') ? 'text-purple-600 font-semibold' : 'hover:text-[#2563EB]' }}"
+                            wire:navigate
+                            href="{{ route('programs') }}"
+                            class="inline-flex items-center gap-2 transition {{ request()->routeIs('programs*') ? 'text-purple-600 font-semibold' : 'hover:text-[#2563EB]' }}"
                             @focus="eventsMenu = true"
                             @click="eventsMenu = !eventsMenu"
                         >
-                            Events
+                            Programs
                             <i class="fa-solid fa-chevron-down text-xs"></i>
                         </a>
 
@@ -167,29 +174,7 @@
                             class="absolute left-0 top-full z-50 w-52 pt-4"
                         >
                             <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
-                                <div
-                                    class="relative"
-                                    @mouseenter="programsMenu = true"
-                                    @mouseleave="programsMenu = false"
-                                >
-                                    <button type="button" class="flex w-full items-center justify-between rounded px-4 py-2 text-left text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#E61E5C]">
-                                        Programs
-                                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                                    </button>
-
-                                    <div
-                                        x-cloak
-                                        x-show="programsMenu"
-                                        x-transition
-                                        class="absolute left-full top-0 z-50 w-52 pl-3"
-                                    >
-                                        <div class="rounded-[8px] border border-white/10 bg-gray-900/95 p-2 shadow-2xl shadow-black/40 backdrop-blur">
-                                            <a href="{{ route('programs') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#F05A12]">Programs</a>
-                                            <a href="{{ route('programs') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#149CB9]">All Programs</a>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <a href="{{ route('events') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#E61E5C]">Events</a>
                                 <a href="{{ route('community') }}" class="block rounded px-4 py-2 text-sm text-gray-200 transition hover:bg-white/5 hover:text-[#14A84D]">Community</a>
                             </div>
                         </div>
@@ -209,9 +194,10 @@
                         <label class="sr-only" for="site-search">Search site</label>
                         <input
                             id="site-search"
+                            x-ref="siteSearch"
                             name="q"
                             type="search"
-                            placeholder="Search the whole site..."
+                            placeholder="Search"
                             class="w-full rounded-full border border-white/10 bg-gray-900 px-4 py-2 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-purple-400"
                         >
                     </form>
@@ -221,7 +207,7 @@
                     </a>
                     <button
                         type="button"
-                        @click="searchOpen = !searchOpen"
+                        @click="searchOpen = !searchOpen; if (searchOpen) { $nextTick(() => $refs.siteSearch.focus()) }"
                         class="flex h-10 w-10 items-center justify-center rounded-full text-gray-300 transition hover:bg-white/5 hover:text-[#FFD83D]"
                         aria-label="Search"
                     >
@@ -248,7 +234,7 @@
                         id="mobile-site-search"
                         name="q"
                         type="search"
-                        placeholder="Search the whole site..."
+                        placeholder="Search"
                         class="w-full rounded-full border border-white/10 bg-gray-900 px-4 py-2 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-purple-400"
                     >
                 </form>
@@ -269,6 +255,7 @@
                 <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
                     <a href="{{ route('team') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#E61E5C]">Team</a>
                     <a href="{{ route('board') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#D98608]">Board</a>
+                    <a href="{{ route('partners') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#7646E8]">Partners</a>
                     <a href="{{ route('policies') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#14A84D]">Policies</a>
                     <a href="{{ route('financials') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#149CB9]">Financials</a>
                 </div>
@@ -282,9 +269,13 @@
                 </a>
                 <a href="{{ route('events') }}" class="transition py-2 hover:text-[#2563EB]">Events</a>
                 <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
-                    <span class="py-1 text-sm font-semibold text-gray-300">Programs</span>
+                    <span class="py-1 text-sm font-semibold text-gray-300">By Program</span>
                     <div class="ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
-                        <a href="{{ route('programs') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#F05A12]">Programs</a>
+                        @forelse ($navPrograms as $program)
+                            <a href="{{ route('programs.show', $program->id) }}" class="py-1 text-sm text-gray-400 transition hover:text-white">{{ $program->name }}</a>
+                        @empty
+                            <span class="py-1 text-sm text-gray-500">No programs yet</span>
+                        @endforelse
                         <a href="{{ route('programs') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#149CB9]">All Programs</a>
                     </div>
                     <a href="{{ route('community') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#14A84D]">Community</a>
@@ -304,12 +295,13 @@
         <div class="container mx-auto px-8 max-w-7xl">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
-                            <span class="text-white font-bold text-xl">Q</span>
-                        </div>
-                        <span class="text-xl font-bold">Queer<span class="text-purple-500">Worx</span></span>
-                    </div>
+                    <a wire:navigate href="{{ route('home') }}" class="inline-flex items-center" aria-label="Queer WorX home">
+                        <img
+                            src="{{ asset('images/1df067aa-d966-491f-a61e-bdfc572c0075.png') }}"
+                            alt="Queer WorX"
+                            class="h-14 w-auto max-w-[190px] object-contain"
+                        >
+                    </a>
                     <p class="text-gray-400 mt-4">
                         Promoting and advancing economic and social inclusion for Lesotho LGBTIQ+ community.
                     </p>

@@ -21,9 +21,9 @@ class extends Component {
 
         <div class="relative mx-auto max-w-7xl px-6">
             <div class="max-w-3xl">
-                <p class="text-sm font-bold uppercase tracking-wide text-[#149CB9]">Accountability</p>
-                <h1 class="mt-2 text-4xl font-bold tracking-normal text-white sm:text-5xl">
-                    Financials
+                <p class="text-sm font-bold uppercase tracking-wide text-[#149CB9]"></p>
+                <h1 class="mt-2 text-4xl font-bold tracking-normal text-[#149CB9] sm:text-5xl">
+                    Accountability
                 </h1>
             </div>
 

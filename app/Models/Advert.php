@@ -10,6 +10,7 @@ class Advert extends Model
         'title',
         'url',
         'thumbnail',
+        'video_path',
         'position',
         'views',
         'clicks'

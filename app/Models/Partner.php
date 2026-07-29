@@ -4,14 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TeamMember extends Model
+class Partner extends Model
 {
     protected $fillable = [
         'name',
-        'role',
-        'bio',
-        'member_type',
-        'photo_path',
+        'website_url',
+        'logo_path',
         'sort_order',
         'is_active',
     ];

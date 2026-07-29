@@ -12,8 +12,8 @@ class extends Component {
     public $name = '';
     public $email = '';
     public $phone = '';
-    public $interest = 'Community';
-    public $message = '';
+    public $interest = 'Entrepreneur / Business owner';
+    public $businessDetails = '';
     public $submitted = false;
 
     public function join(): void
@@ -21,18 +21,24 @@ class extends Component {
         $validated = $this->validate([
             'name' => 'required|string|max:160',
             'email' => 'required|email|max:180',
-            'phone' => 'nullable|string|max:60',
             'interest' => 'required|string|max:120',
-            'message' => 'nullable|string|max:600',
+            'businessDetails' => $this->interest === 'Entrepreneur / Business owner' ? ['required', 'string', 'max:300'] : ['nullable', 'string', 'max:300'],
         ]);
 
         Subscriber::updateOrCreate(
             ['email' => $validated['email']],
-            $validated
+            [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'interest' => $validated['interest'],
+                'message' => $validated['businessDetails']
+                    ? 'Business name & sector: '.$validated['businessDetails']
+                    : null,
+            ]
         );
 
-        $this->reset(['name', 'email', 'phone', 'message']);
-        $this->interest = 'Community';
+        $this->reset(['name', 'email', 'phone', 'businessDetails']);
+        $this->interest = 'Entrepreneur / Business owner';
         $this->submitted = true;
         $this->dispatch('member-joined');
     }
@@ -121,62 +127,66 @@ class extends Component {
 
     <div class="h-1.5 bg-[linear-gradient(90deg,#E61E5C_0%,#F05A12_18%,#FFD83D_34%,#14A84D_52%,#149CB9_72%,#7646E8_100%)]"></div>
 
-    <section id="join-form" class="bg-[#111429] py-16 text-white">
-        <div class="mx-auto grid max-w-6xl gap-10 px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-            <div>
-                <p class="text-sm font-bold uppercase tracking-wide text-[#FFD83D]">Membership</p>
-                <h2 class="mt-3 text-4xl font-bold tracking-normal text-transparent" style="background: linear-gradient(90deg,#E61E5C,#F05A12,#FFD83D,#14A84D,#149CB9,#7646E8); -webkit-background-clip: text; background-clip: text;">Become a member</h2>
-                <p class="mt-4 text-white/65">
-                    Fill in your details and we will keep you connected to Queer WorX programs, community updates, and opportunities.
+    <section id="join-form" class="bg-[#0e0f20] py-16 text-white sm:py-20">
+        <div class="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[0.78fr_1.22fr] lg:items-start lg:gap-20">
+            <div class="pt-6">
+                <p class="text-sm font-extrabold uppercase tracking-[0.28em] text-[#a8adce]">Community</p>
+                <h2 class="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">Join the community</h2>
+                <div class="mt-5 h-1 w-[72px] rounded-full bg-[#7c36ef]"></div>
+                <p class="mt-7 max-w-md text-lg leading-8 text-white/70">
+                    Whether you're here to stay connected, grow a business, offer your time, or partner with us — tell us who you are and we'll keep the right opportunities coming your way.
                 </p>
             </div>
 
-            <form wire:submit="join" class="grid gap-5 rounded-[8px] border border-white/10 bg-white/[0.06] p-6 shadow-2xl shadow-black/20">
+            <form wire:submit="join" class="grid gap-6 rounded-[22px] border border-[#343451] bg-[#1a1a31] p-6 shadow-2xl shadow-black/15 sm:p-10">
                 @if ($submitted)
-                    <div class="rounded-[8px] border border-[#14A84D]/30 bg-[#14A84D]/10 p-4 text-sm font-semibold text-[#9CF5B5]">
-                        Thank you. Your membership request has been received.
+                    <div class="rounded-[10px] border border-[#14A84D]/30 bg-[#14A84D]/10 p-4 text-sm font-semibold text-[#9CF5B5]">
+                        Thank you. You are now connected to the Queer WorX community.
                     </div>
                 @endif
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <label class="grid gap-2">
-                        <span class="text-sm font-semibold">Full name</span>
-                        <input wire:model="name" type="text" class="rounded-[8px] border border-white/10 bg-[#0b0d1d] px-4 py-3 text-white outline-none focus:border-purple-400">
+                        <span class="text-lg font-bold">Full name</span>
+                        <input wire:model="name" type="text" autocomplete="name" class="rounded-[14px] border border-[#343451] bg-[#0e0f20] px-4 py-3 text-white outline-none transition focus:border-[#7c36ef] focus:ring-1 focus:ring-[#7c36ef]">
                         @error('name') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
                     </label>
                     <label class="grid gap-2">
-                        <span class="text-sm font-semibold">Email</span>
-                        <input wire:model="email" type="email" class="rounded-[8px] border border-white/10 bg-[#0b0d1d] px-4 py-3 text-white outline-none focus:border-purple-400">
+                        <span class="text-lg font-bold">Email</span>
+                        <input wire:model="email" type="email" autocomplete="email" class="rounded-[14px] border border-[#343451] bg-[#0e0f20] px-4 py-3 text-white outline-none transition focus:border-[#7c36ef] focus:ring-1 focus:ring-[#7c36ef]">
                         @error('email') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
-                    </label>
-                    <label class="grid gap-2">
-                        <span class="text-sm font-semibold">Phone</span>
-                        <input wire:model="phone" type="text" class="rounded-[8px] border border-white/10 bg-[#0b0d1d] px-4 py-3 text-white outline-none focus:border-purple-400">
-                        @error('phone') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
-                    </label>
-                    <label class="grid gap-2">
-                        <span class="text-sm font-semibold">Interest</span>
-                        <select wire:model="interest" class="rounded-[8px] border border-white/10 bg-[#0b0d1d] px-4 py-3 text-white outline-none focus:border-purple-400">
-                            <option value="Community">Community</option>
-                            <option value="Programs">Programs</option>
-                            <option value="Volunteering">Volunteering</option>
-                            <option value="Partnership">Partnership</option>
-                        </select>
-                        @error('interest') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
                     </label>
                 </div>
 
                 <label class="grid gap-2">
-                    <span class="text-sm font-semibold">Message</span>
-                    <textarea wire:model="message" rows="4" class="rounded-[8px] border border-white/10 bg-[#0b0d1d] px-4 py-3 text-white outline-none focus:border-purple-400"></textarea>
-                    @error('message') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
+                    <span class="text-lg font-bold">I'm joining as...</span>
+                    <select wire:model.live="interest" class="rounded-[14px] border border-[#7c36ef] bg-[#0e0f20] px-4 py-3 text-lg text-white outline-none transition focus:ring-1 focus:ring-[#7c36ef]">
+                        <option value="Community — keep me connected">Community — keep me connected</option>
+                        <option value="Entrepreneur / Business owner">Entrepreneur / Business owner</option>
+                        <option value="Volunteer — time &amp; skills">Volunteer — time &amp; skills</option>
+                        <option value="Partner / Organisation">Partner / Organisation</option>
+                        <option value="Creative / Contributor">Creative / Contributor</option>
+                    </select>
+                    @error('interest') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
                 </label>
 
-                <div class="flex justify-end">
-                    <button type="submit" class="rounded-full bg-[#5E2E91] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#4b2376]">
-                        Submit Membership
+                @if ($interest === 'Entrepreneur / Business owner')
+                    <label class="grid gap-2 border-l-4 border-[#7c36ef] pl-4">
+                        <span class="text-lg font-bold">Business name &amp; sector <span class="text-base font-normal text-white/50">(shown because you picked Entrepreneur)</span></span>
+                        <input wire:model="businessDetails" type="text" class="rounded-[14px] border border-[#343451] bg-[#0e0f20] px-4 py-3 text-white outline-none transition focus:border-[#7c36ef] focus:ring-1 focus:ring-[#7c36ef]">
+                        @error('businessDetails') <span class="text-sm text-pink-300">{{ $message }}</span> @enderror
+                    </label>
+                @endif
+
+                <div class="flex justify-end pt-1">
+                    <button type="submit" class="rounded-full bg-[#7c36ef] px-8 py-3.5 text-lg font-bold text-white transition hover:bg-[#6827d7]">
+                        Join the community
                     </button>
                 </div>
+
+                <p class="text-center text-sm leading-6 text-white/50">
+                    Queer WorX is a non-membership organisation. Your details are stored securely to connect you with relevant programmes and opportunities — never shared without your consent.
+                </p>
             </form>
         </div>
     </section>

@@ -1,12 +1,12 @@
 <?php
 
-use Livewire\Volt\Component;
+use App\Models\Advert;
 use App\Models\Article;
 use App\Models\Category;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
+use Livewire\Volt\Component;
 
 new
 #[Layout('components.layouts.app.frontend')]
@@ -20,295 +20,201 @@ class extends Component {
     #[Url(as: 'search')]
     public $search = '';
 
-    public function mount()
+    public function mount(): void
     {
-        $this->categories = Category::latest()->get();
+        $this->categories = Category::orderBy('name')->get();
         $this->loadArticles();
     }
 
-    public function loadArticles()
+    public function loadArticles(): void
     {
-        $query = Article::with('categories')
-            ->where('status', 'published')
-            ->orderBy('published_date', 'desc');
+        $query = Article::with('categories')->where('status', 'published')->orderByDesc('published_date')->latest();
 
         if ($this->selectedCategory) {
-            $category = $this->selectedCategory;
-
-            $query->whereHas('categories', function ($q) use ($category) {
-                $q->where('name', $category)
-                    ->orWhere('slug', Str::slug($category));
+            $selectedCategory = $this->selectedCategory;
+            $query->whereHas('categories', function ($categoryQuery) use ($selectedCategory) {
+                $categoryQuery->where('name', $selectedCategory)->orWhere('slug', Str::slug($selectedCategory));
             });
         }
 
         if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->search . '%')
-                    ->orWhere('exerpt', 'like', '%' . $this->search . '%')
-                    ->orWhere('body', 'like', '%' . $this->search . '%');
+            $query->where(function ($articleQuery) {
+                $articleQuery->where('title', 'like', '%'.$this->search.'%')
+                    ->orWhere('exerpt', 'like', '%'.$this->search.'%')
+                    ->orWhere('body', 'like', '%'.$this->search.'%');
             });
         }
 
         $this->articles = $query->get();
     }
 
-    public function updatedSelectedCategory()
+    public function updatedSelectedCategory(): void
     {
         $this->loadArticles();
     }
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
-        $this->loadArticles();
-    }
-
-    public function selectCategory($category)
-    {
-        $this->selectedCategory = $category;
-        $this->loadArticles();
-    }
-
-    public function clearFilters()
-    {
-        $this->selectedCategory = null;
-        $this->search = '';
         $this->loadArticles();
     }
 }; ?>
 
 @php
-    $featuredArticle = $articles->first();
-    $latestArticles = $articles->skip(1)->take(3)->values();
-    $popularArticles = $articles->sortByDesc('views')->take(5)->values();
-    $communityArticle = $articles->first(fn ($article) => $article->categories->contains('name', 'Community Stories')) ?? $featuredArticle;
-
-    $fallbackArticles = collect([
-        ['title' => 'Coming Out in Lesotho: My Journey', 'category' => 'Community Stories', 'excerpt' => 'A personal story of courage, fear, and finding acceptance in unexpected places.', 'author' => 'Beekay Bane.', 'date' => 'May 05, 2026', 'color' => 'from-pink-200 via-rose-100 to-green-100', 'icon' => 'fa-heart'],
-        ['title' => 'Understanding Gender Identity', 'category' => 'Education', 'excerpt' => 'A simple guide to understanding gender identity and how it differs from sex.', 'author' => 'Queer Worx Team', 'date' => 'May 12, 2026', 'color' => 'from-amber-100 via-yellow-100 to-blue-100', 'icon' => 'fa-brain'],
-        ['title' => 'Mental Health: You Are Not Alone', 'category' => 'Health & Wellbeing', 'excerpt' => 'Taking care of your mental health as an LGBTIQ+ person.', 'author' => 'Tsebo Phakisi.', 'date' => 'May 8, 2026', 'color' => 'from-pink-100 via-purple-100 to-cyan-100', 'icon' => 'fa-capsules'],
-    ]);
-
-    $categoryTiles = [
-        ['name' => 'News & Updates', 'icon' => 'fa-bullhorn', 'bg' => 'bg-purple-50', 'color' => 'text-purple-600'],
-        ['name' => 'Community Stories', 'icon' => 'fa-people-group', 'bg' => 'bg-pink-50', 'color' => 'text-pink-500'],
-        ['name' => 'Education', 'icon' => 'fa-book-open', 'bg' => 'bg-blue-50', 'color' => 'text-blue-500'],
-        ['name' => 'Health & Wellbeing', 'icon' => 'fa-heart-pulse', 'bg' => 'bg-emerald-50', 'color' => 'text-emerald-500'],
-        ['name' => 'Rights & Advocacy', 'icon' => 'fa-scale-balanced', 'bg' => 'bg-orange-50', 'color' => 'text-orange-500'],
-        ['name' => 'Culture', 'icon' => 'fa-palette', 'bg' => 'bg-yellow-50', 'color' => 'text-yellow-500'],
-        ['name' => 'Voices', 'icon' => 'fa-microphone-lines', 'bg' => 'bg-violet-50', 'color' => 'text-violet-500'],
-        ['name' => 'Events', 'icon' => 'fa-calendar-days', 'bg' => 'bg-rose-50', 'color' => 'text-rose-500'],
-    ];
-
-    $articleUrl = fn ($article) => $article ? route('article', $article->slug) : route('submit-story');
+    $featuredStories = $articles->take(5)->values();
+    $latestStories = $articles->slice($featuredStories->count() > 1 ? 1 : 0, 4)->values();
+    $sidebarAdverts = Advert::orderBy('position')->latest()->take(3)->get();
 @endphp
 
-<main class="bg-[#111429] text-white">
-    <section class="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[0.9fr_1.25fr] lg:items-center lg:py-20">
-        <div>
-            <h1 class="text-6xl font-bold tracking-normal text-purple-400 sm:text-7xl">
-                Xpressions
-            </h1>
-            <p class="mt-4 text-xl font-semibold text-white">
-                Stories. Perspectives. Knowledge. Community.
-            </p>
-            <div class="mt-6 flex h-4 w-32 items-center gap-1">
-                @foreach (['bg-purple-500', 'bg-pink-400', 'bg-orange-300', 'bg-yellow-300', 'bg-emerald-400', 'bg-cyan-400'] as $color)
-                    <span class="h-1.5 w-5 rounded-full {{ $color }}"></span>
-                @endforeach
+<main class="min-h-screen bg-[#111429] text-white">
+    <section class="mx-auto max-w-7xl px-6 py-12 sm:py-16">
+        <div class="mb-8 flex flex-col gap-5 border-b border-white/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <p class="text-sm font-extrabold uppercase tracking-[0.28em] text-pink-300">Stories · Voices · Our Truth</p>
             </div>
-            <p class="mt-8 max-w-md text-lg leading-8 text-white/60">
-                A space for our voices to be heard, our stories to be shared, and our community to stay informed and inspired.
-            </p>
-
-            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                <form action="{{ route('articles') }}" method="GET" class="flex w-full max-w-md rounded-full border border-white/10 bg-black/25 p-1 shadow-sm">
-                    <label class="sr-only" for="xpressions-search">Search articles</label>
-                    <input
-                        id="xpressions-search"
-                        name="search"
-                        value="{{ $search }}"
-                        type="search"
-                        placeholder="Search stories..."
-                        class="min-w-0 flex-1 rounded-full bg-transparent px-4 py-2 text-sm text-white outline-none placeholder:text-white/45"
-                    >
-                    <button class="rounded-full bg-purple-700 px-4 text-sm font-semibold text-white transition hover:bg-purple-800" type="submit">
-                        Search
-                    </button>
+            <div class="flex flex-wrap gap-3">
+                <form action="{{ route('articles') }}" method="GET" class="flex rounded-full border border-white/15 bg-black/20 p-1">
+                    <label class="sr-only" for="xpressions-search">Search stories</label>
+                    <input id="xpressions-search" name="search" value="{{ $search }}" type="search" placeholder="Search stories" class="min-w-0 bg-transparent px-4 py-2 text-sm text-white outline-none placeholder:text-white/40">
+                    <button class="rounded-full bg-[#e61e5c] px-4 text-sm font-bold text-white transition hover:bg-[#c9184f]" type="submit">Search</button>
                 </form>
-
-                <a wire:navigate href="{{ route('submit-story') }}" class="inline-flex items-center justify-center rounded-full border border-purple-400/40 px-5 py-3 text-sm font-semibold text-purple-200 transition hover:border-purple-300 hover:text-white">
-                    Upload Story
-                </a>
+                <a wire:navigate href="{{ route('submit-story') }}" class="inline-flex items-center rounded-full bg-[#e61e5c] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#c9184f]">Submit a story</a>
             </div>
         </div>
 
-        <article class="relative min-h-[390px] overflow-hidden rounded-[8px] bg-gray-900 shadow-xl">
-            @if ($featuredArticle?->thumbnail)
-                <img src="{{ Storage::url($featuredArticle->thumbnail) }}" alt="{{ $featuredArticle->title }}" class="absolute inset-0 h-full w-full object-cover">
-            @else
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,0.35),transparent_18%),linear-gradient(135deg,#4F46E5_0%,#DB2777_35%,#F97316_58%,#16A34A_78%,#0891B2_100%)]"></div>
-                <div class="absolute inset-0 flex items-center justify-center text-white/25">
-                    <i class="fa-solid fa-image text-8xl"></i>
-                </div>
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
-            <div class="relative flex h-full min-h-[390px] flex-col justify-end p-8 text-white">
-                <span class="w-fit rounded bg-purple-700 px-3 py-2 text-xs font-bold uppercase tracking-wide">
-                    Featured Story
-                </span>
-                <h2 class="mt-28 max-w-lg text-4xl font-bold leading-tight">
-                    {{ $featuredArticle->title ?? 'What Pride Means to Us in Lesotho' }}
-                </h2>
-                <p class="mt-3 max-w-lg text-lg text-white/85">
-                    {{ $featuredArticle?->exerpt ?? 'Upload a featured Xpressions story with a thumbnail to replace this placeholder panel.' }}
-                </p>
-                <a href="{{ $articleUrl($featuredArticle) }}" class="mt-6 inline-flex w-fit items-center gap-2 text-lg font-semibold transition hover:text-purple-200">
-                    {{ $featuredArticle ? 'Read More' : 'Upload Story' }} <i class="fa-solid fa-arrow-right text-sm"></i>
-                </a>
-            </div>
-        </article>
-    </section>
-
-    <section class="border-t border-white/10">
-        <div class="mx-auto max-w-7xl px-6 py-9">
-            <div class="flex items-center justify-between gap-6">
-                <h2 class="text-3xl font-bold">Latest Articles</h2>
-                <a href="{{ route('articles') }}" class="text-sm font-bold text-purple-300 transition hover:text-pink-300">
-                    View all articles <i class="fa-solid fa-arrow-right ml-1"></i>
-                </a>
-            </div>
-
-            <div class="mt-5 grid gap-5 lg:grid-cols-3">
-                @forelse ($latestArticles as $article)
-                    <a wire:navigate href="{{ route('article', $article->slug) }}" class="block overflow-hidden rounded-[8px] border border-white/10 bg-black/25 shadow-sm transition hover:-translate-y-1 hover:border-purple-400/60 hover:shadow-lg">
-                        @if ($article->thumbnail)
-                            <img src="{{ Storage::url($article->thumbnail) }}" alt="{{ $article->title }}" class="h-44 w-full object-cover">
-                        @else
-                            <div class="flex h-44 items-center justify-center bg-gradient-to-br from-purple-100 via-pink-100 to-cyan-100 text-purple-300">
-                                <i class="fa-solid fa-image text-5xl"></i>
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div>
+                @if ($featuredStories->isNotEmpty())
+                    <div
+                        x-data="{
+                            activeSlide: 0,
+                            total: {{ $featuredStories->count() }},
+                            autoplay: null,
+                            next() { this.activeSlide = this.activeSlide === this.total - 1 ? 0 : this.activeSlide + 1 },
+                            previous() { this.activeSlide = this.activeSlide === 0 ? this.total - 1 : this.activeSlide - 1 },
+                            startAutoplay() { if (this.total > 1 && !this.autoplay) this.autoplay = setInterval(() => this.next(), 6000) },
+                            stopAutoplay() { clearInterval(this.autoplay); this.autoplay = null },
+                        }"
+                        x-init="startAutoplay(); return () => stopAutoplay()"
+                        x-on:mouseenter="stopAutoplay()"
+                        x-on:mouseleave="startAutoplay()"
+                        class="relative overflow-hidden rounded-[18px] border border-white/10 bg-[#1a1a31] shadow-2xl shadow-black/20"
+                    >
+                        <div class="relative min-h-[420px] sm:min-h-[500px]">
+                            @foreach ($featuredStories as $index => $article)
+                                <article x-show="activeSlide === {{ $index }}" x-transition.opacity.duration.400ms class="absolute inset-0" @if ($index !== 0) style="display: none;" @endif>
+                                    @if ($article->thumbnail)
+                                        <div class="absolute inset-0 flex items-center justify-center bg-black/35">
+                                            <img src="{{ \Illuminate\Support\Facades\Storage::url($article->thumbnail) }}" alt="{{ $article->title }}" class="h-full w-full object-contain">
+                                        </div>
+                                    @else
+                                        <div class="absolute inset-0 bg-[linear-gradient(135deg,#e61e5c_0%,#7646e8_100%)]"></div>
+                                    @endif
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent"></div>
+                                    <div class="relative flex h-full min-h-[420px] flex-col justify-end p-6 sm:min-h-[500px] sm:p-9">
+                                        <span class="w-fit rounded bg-[#e61e5c] px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide">Featured story</span>
+                                        <h2 class="mt-4 max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">{{ $article->title }}</h2>
+                                        <p class="mt-3 max-w-xl text-sm leading-6 text-white/85 sm:text-base">{{ Str::limit($article->exerpt ?: strip_tags($article->body), 190) }}</p>
+                                        <a wire:navigate href="{{ route('article', $article->slug) }}" class="mt-6 inline-flex w-fit rounded-full bg-[#e61e5c] px-5 py-2.5 text-sm font-bold transition hover:bg-[#c9184f]">Read full story <span class="ml-2">→</span></a>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                        @if ($featuredStories->count() > 1)
+                            <button type="button" x-on:click="previous()" class="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition hover:bg-[#e61e5c]" aria-label="Previous slide">‹</button>
+                            <button type="button" x-on:click="next()" class="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white transition hover:bg-[#e61e5c]" aria-label="Next slide">›</button>
+                            <div class="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
+                                @foreach ($featuredStories as $index => $article)
+                                    <button type="button" x-on:click="activeSlide = {{ $index }}" class="h-2.5 w-2.5 rounded-full transition" x-bind:class="activeSlide === {{ $index }} ? 'bg-[#e61e5c]' : 'bg-white/60'" aria-label="Show {{ $article->title }}"></button>
+                                @endforeach
                             </div>
                         @endif
-                        <div class="p-5">
-                            <span class="rounded bg-purple-100 px-3 py-1 text-[11px] font-bold uppercase text-purple-700">
-                                {{ $article->categories->first()->name ?? 'Community Stories' }}
-                            </span>
-                            <h3 class="mt-4 text-xl font-bold leading-snug">{{ $article->title }}</h3>
-                            <p class="mt-2 text-sm leading-6 text-white/60">{{ Str::limit($article->exerpt ?: strip_tags($article->body), 105) }}</p>
-                            <div class="mt-5 flex items-center gap-3 text-xs font-medium text-white/45">
-                                <span>{{ $article->img_credit ?: 'Queer Worx Team' }}</span>
-                                <span>•</span>
-                                <span>{{ $article->published_date?->format('M d, Y') }}</span>
-                                <span>•</span>
-                                <span>5 min read</span>
-                            </div>
-                        </div>
-                    </a>
-                @empty
-                    @foreach ($fallbackArticles as $item)
-                        <article class="overflow-hidden rounded-[8px] border border-white/10 bg-black/25 shadow-sm">
-                            <div class="flex h-44 items-center justify-center bg-gradient-to-br {{ $item['color'] }} text-purple-500">
-                                <i class="fa-solid {{ $item['icon'] }} text-6xl"></i>
-                            </div>
-                            <div class="p-5">
-                                <span class="rounded bg-purple-100 px-3 py-1 text-[11px] font-bold uppercase text-purple-700">{{ $item['category'] }}</span>
-                                <h3 class="mt-4 text-xl font-bold leading-snug text-white">{{ $item['title'] }}</h3>
-                                <p class="mt-2 text-sm leading-6 text-white/60">{{ $item['excerpt'] }}</p>
-                                <div class="mt-5 flex items-center gap-3 text-xs font-medium text-white/45">
-                                    <span>{{ $item['author'] }}</span>
-                                    <span>•</span>
-                                    <span>{{ $item['date'] }}</span>
-                                    <span>•</span>
-                                    <span>5 min read</span>
-                                </div>
-                            </div>
-                        </article>
-                    @endforeach
-                @endforelse
-            </div>
-        </div>
-    </section>
-
-    <section class="mx-auto max-w-7xl px-6 py-8">
-        <h2 class="text-3xl font-bold">Browse by Category</h2>
-        <div class="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
-            @foreach ($categoryTiles as $tile)
-                <button wire:click="selectCategory('{{ $tile['name'] }}')" class="{{ $tile['bg'] }} rounded-[8px] p-5 text-center transition hover:-translate-y-1 hover:shadow-md">
-                    <i class="fa-solid {{ $tile['icon'] }} {{ $tile['color'] }} text-4xl"></i>
-                    <span class="mt-4 block text-sm font-bold leading-tight text-gray-900">{{ $tile['name'] }}</span>
-                </button>
-            @endforeach
-        </div>
-    </section>
-
-    <section class="mx-auto max-w-7xl px-6 py-6">
-        <article class="grid gap-7 rounded-[8px] border border-white/10 bg-black/25 p-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div class="min-h-56 overflow-hidden rounded-[8px]">
-                @if ($communityArticle?->thumbnail)
-                    <img src="{{ Storage::url($communityArticle->thumbnail) }}" alt="{{ $communityArticle->title }}" class="h-full min-h-56 w-full object-cover">
+                    </div>
                 @else
-                    <div class="flex min-h-56 items-center justify-center bg-gradient-to-br from-cyan-100 via-white to-pink-100 text-purple-300">
-                        <i class="fa-solid fa-flag text-7xl"></i>
+                    <div class="flex min-h-[420px] items-center justify-center rounded-[18px] border border-white/10 bg-[#1a1a31] p-8 text-center text-white/60">
+                        Publish stories from the admin dashboard to populate the Xpressions slider.
                     </div>
                 @endif
-            </div>
-            <div class="relative">
-                <span class="text-xs font-bold uppercase text-purple-700">Featured Community Story</span>
-                <h2 class="mt-5 text-3xl font-bold">{{ $communityArticle->title ?? 'Finding Home in My Community' }}</h2>
-                <p class="mt-3 max-w-xl text-white/60">
-                    {{ $communityArticle?->exerpt ?? 'From feeling invisible to finding my tribe.' }}
-                </p>
-                <a href="{{ $articleUrl($communityArticle) }}" class="mt-6 inline-flex items-center gap-2 font-bold text-purple-300 transition hover:text-pink-300">
-                    {{ $communityArticle ? 'Read Full Story' : 'Upload Community Story' }} <i class="fa-solid fa-arrow-right text-sm"></i>
-                </a>
-                <i class="fa-solid fa-quote-right absolute right-4 top-8 hidden text-8xl text-purple-400/60 md:block"></i>
-            </div>
-        </article>
-    </section>
-    
-    <section class="mx-auto max-w-7xl px-6 pb-16 pt-6">
-        <div class="flex items-center justify-between">
-            <h2 class="text-3xl font-bold">Popular Reads</h2>
-            <a href="{{ route('articles') }}" class="text-sm font-bold text-purple-300 transition hover:text-pink-300">
-                View all <i class="fa-solid fa-arrow-right ml-1"></i>
-            </a>
-        </div>
 
-        <div class="mt-6 grid gap-5 lg:grid-cols-5">
-            @forelse ($popularArticles as $index => $article)
-                <a wire:navigate href="{{ route('article', $article->slug) }}" class="group grid grid-cols-[auto_1fr] gap-3">
-                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-700 text-sm font-bold text-white">{{ $index + 1 }}</span>
-                    <div class="flex gap-3">
-                        @if ($article->thumbnail)
-                            <img src="{{ Storage::url($article->thumbnail) }}" alt="{{ $article->title }}" class="h-20 w-20 rounded-[8px] object-cover">
-                        @else
-                            <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[8px] bg-purple-100 text-purple-400">
-                                <i class="fa-solid fa-image"></i>
+                <section class="mt-10">
+                    <div class="flex items-center justify-between gap-4">
+                        <h2 class="text-2xl font-bold">Latest Stories</h2>
+                        <a wire:navigate href="{{ route('articles') }}" class="text-sm font-bold text-pink-300 hover:text-pink-200">View all stories →</a>
+                    </div>
+                    <div class="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                        @forelse ($latestStories as $article)
+                            <a wire:navigate href="{{ route('article', $article->slug) }}" class="group overflow-hidden rounded-[14px] border border-white/10 bg-[#1a1a31] transition hover:-translate-y-1 hover:border-[#e61e5c]/60">
+                                <div class="flex min-h-[170px] items-center justify-center bg-black/25 p-2">
+                                    @if ($article->thumbnail)
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($article->thumbnail) }}" alt="{{ $article->title }}" class="max-h-[230px] w-full object-contain">
+                                    @else
+                                        <i class="fa-solid fa-image text-4xl text-white/25"></i>
+                                    @endif
+                                </div>
+                                <div class="p-4">
+                                    <span class="rounded bg-[#e61e5c]/20 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wide text-pink-200">{{ $article->categories->first()->name ?? 'Xpressions' }}</span>
+                                    <h3 class="mt-3 text-base font-bold leading-snug text-white group-hover:text-pink-200">{{ Str::limit($article->title, 64) }}</h3>
+                                    <p class="mt-3 text-xs text-white/45">{{ $article->published_date?->format('M d, Y') ?? 'Recently published' }}</p>
+                                </div>
+                            </a>
+                        @empty
+                            <p class="text-sm text-white/55 sm:col-span-2 xl:col-span-4">No further stories match this search yet.</p>
+                        @endforelse
+                    </div>
+                </section>
+            </div>
+
+            <aside class="space-y-6">
+                <div class="text-xs font-extrabold uppercase tracking-wide text-pink-300">Advertisement</div>
+                @if ($sidebarAdverts->isNotEmpty())
+                    <div
+                        x-data="{
+                            activeAdvert: 0,
+                            total: {{ $sidebarAdverts->count() }},
+                            autoplay: null,
+                            next() { this.activeAdvert = this.activeAdvert === this.total - 1 ? 0 : this.activeAdvert + 1 },
+                            startAutoplay() { if (this.total > 1 && !this.autoplay) this.autoplay = setInterval(() => this.next(), 6000) },
+                            stopAutoplay() { clearInterval(this.autoplay); this.autoplay = null },
+                        }"
+                        x-init="startAutoplay(); return () => stopAutoplay()"
+                        x-on:mouseenter="stopAutoplay()"
+                        x-on:mouseleave="startAutoplay()"
+                        class="relative overflow-hidden rounded-[14px]"
+                    >
+                        <div class="min-h-[260px]">
+                            @foreach ($sidebarAdverts as $index => $advert)
+                                <a x-show="activeAdvert === {{ $index }}" x-transition.opacity.duration.400ms href="{{ $advert->url }}" target="_blank" rel="noopener noreferrer" class="group block overflow-hidden rounded-[14px] border border-white/10 bg-[#1a1a31] transition hover:border-[#e61e5c]/60" aria-label="Open {{ $advert->title }}" @if ($index !== 0) style="display: none;" @endif>
+                                    <div class="flex min-h-[180px] items-center justify-center bg-white p-3">
+                                        @if ($advert->video_path)
+                                            <video src="{{ route('media.show', ['path' => $advert->video_path]) }}" class="max-h-[210px] w-full object-contain" autoplay muted loop playsinline></video>
+                                        @elseif ($advert->thumbnail)
+                                            <img src="{{ route('media.show', ['path' => $advert->thumbnail]) }}" alt="{{ $advert->title }}" class="max-h-[210px] w-full object-contain">
+                                        @else
+                                            <span class="text-center font-bold text-[#7646e8]">{{ $advert->title }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="p-4 text-sm font-bold text-white group-hover:text-pink-200">{{ $advert->title }} <span class="ml-1">→</span></p>
+                                </a>
+                            @endforeach
+                        </div>
+
+                        @if ($sidebarAdverts->count() > 1)
+                            <div class="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+                                @foreach ($sidebarAdverts as $index => $advert)
+                                    <button type="button" x-on:click="activeAdvert = {{ $index }}" class="h-2 w-2 rounded-full transition" x-bind:class="activeAdvert === {{ $index }} ? 'bg-[#e61e5c]' : 'bg-white/60'" aria-label="Show {{ $advert->title }}"></button>
+                                @endforeach
                             </div>
                         @endif
-                        <div>
-                            <h3 class="text-sm font-bold leading-snug group-hover:text-purple-300">{{ Str::limit($article->title, 58) }}</h3>
-                            <p class="mt-2 text-xs text-white/45">{{ $article->published_date?->format('M d, Y') }}</p>
-                        </div>
                     </div>
-                </a>
-            @empty
-                @foreach (['LGBTIQ+ Rights in Lesotho: What You Should Know', 'Inclusive Language Guide', 'How to Be an Ally Every Day', 'Pride in Business: Building Inclusive Enterprices', 'Financial Literacy and Growth'] as $index => $title)
-                    <div class="grid grid-cols-[auto_1fr] gap-3">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-700 text-sm font-bold text-white">{{ $index + 1 }}</span>
-                        <div class="flex gap-3">
-                            <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[8px] bg-gradient-to-br from-purple-100 to-pink-100 text-purple-400">
-                                <i class="fa-solid fa-image"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold leading-snug text-white">{{ $title }}</h3>
-                                <p class="mt-2 text-xs text-white/45">Upload article</p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            @endforelse
-        </div>
-    </section>*/
+                @else
+                    <div class="rounded-[14px] border border-white/10 bg-[#1a1a31] p-5 text-sm leading-6 text-white/55">Adverts added in the admin dashboard will appear here.</div>
+                @endif
 
-    <livewire:components.adverts position="3" />
+                <div class="rounded-[14px] border border-[#e61e5c]/35 bg-[#e61e5c]/10 p-6">
+                    <h2 class="text-xl font-bold text-white">Share Your Story</h2>
+                    <p class="mt-3 text-sm leading-6 text-white/70">Xpressions is a platform for our voices, articles and perspectives.</p>
+                    <a wire:navigate href="{{ route('submit-story') }}" class="mt-5 inline-flex rounded-full bg-[#e61e5c] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#c9184f]">Submit now →</a>
+                </div>
+            </aside>
+        </div>
+    </section>
 </main>
