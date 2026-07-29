@@ -6,85 +6,259 @@ use Livewire\Volt\Component;
 
 new class extends Component {
 
-    public $permissions, $name;
+    public $permissions = [];
+    public $groupedPermissions = [];
+    public $name;
     public $selectedPermissions = [];
+
 
     public function mount(): Void
     {
-        $this->permissions = Permission::all();
+        $this->permissions = Permission::all()->toArray();
+
+        $this->groupedPermissions = collect($this->permissions)
+            ->groupBy(function ($permission) {
+                return explode('-', $permission['name'])[0];
+            })
+            ->toArray();
     }
 
-    public function createRole(){
 
+    public function selectAllPermissions($group)
+    {
+        $permissions = collect($this->groupedPermissions[$group])
+            ->pluck('name')
+            ->toArray();
+
+        $this->selectedPermissions = array_unique(
+            array_merge(
+                $this->selectedPermissions,
+                $permissions
+            )
+        );
+    }
+
+
+    public function createRole()
+    {
         $validated = $this->validate([
             'name' => ['string', 'required'],
         ]);
 
 
-        $role = Role::create($validated);
+        $role = Role::create([
+            'name' => $this->name
+        ]);
+
 
         $role->syncPermissions($this->selectedPermissions);
 
-        $this->dispatch('role-created');
 
+        $this->dispatch('role-created');
     }
 
-}; ?>
+};
+
+?>
+
 
 <div>
-    <div>
-        <div class="relative mb-6 w-full">
-            <div class="flex justify-between items-center">
-                <div>
-                    <div class="flex gap-2 items-center">
-                        <a wire:navigate href="{{ route('roles.index') }}"><flux:icon.arrow-left-circle /></a>
-                        <flux:heading size="xl" level="1">{{ __('Add Role') }}</flux:heading>
-                    </div>
-                    <flux:breadcrumbs class="mb-4 mt-2">
-                        <flux:breadcrumbs.item href="{{ route('dashboard') }}">Home</flux:breadcrumbs.item>
-                        <flux:breadcrumbs.item href="{{ route('roles.index') }}">Roles</flux:breadcrumbs.item>
-                        <flux:breadcrumbs.item >Create</flux:breadcrumbs.item>
-                    </flux:breadcrumbs>
+
+    <div class="relative mb-6 w-full">
+
+        <div class="flex justify-between items-center">
+
+            <div>
+
+                <div class="flex gap-2 items-center">
+
+                    <a wire:navigate href="{{ route('roles.index') }}">
+                        <flux:icon.arrow-left-circle />
+                    </a>
+
+                    <flux:heading size="xl" level="1">
+                        {{ __('Add Role') }}
+                    </flux:heading>
+
                 </div>
+
+
+                <flux:breadcrumbs class="mb-4 mt-2">
+
+                    <flux:breadcrumbs.item href="{{ route('dashboard') }}">
+                        Home
+                    </flux:breadcrumbs.item>
+
+
+                    <flux:breadcrumbs.item href="{{ route('roles.index') }}">
+                        Roles
+                    </flux:breadcrumbs.item>
+
+
+                    <flux:breadcrumbs.item>
+                        Create
+                    </flux:breadcrumbs.item>
+
+                </flux:breadcrumbs>
+
+
             </div>
-            <flux:separator variant="subtle" />
+
         </div>
-        <form wire:submit.prevent="createRole" >
-            <div class="flex gap-5 mb-5">
-                <flux:input
-                    wire:model="name"
-                    :label="__('Name')"
-                    type="text"
-                    required
-                    placeholder="Name"
-                    autocomplete="name"
-                />
 
 
-                
-            </div>
+        <flux:separator variant="subtle" />
 
-            <div class="space-x-2 flex gap-2 flex-wrap mb-8">
-                @foreach ($permissions as $permission )
-                    {{-- <label for="" ><input wire:model="selectedPermissions" value="{{ $permission->name }}" type="checkbox"> {{ $permission->name }}</label> --}}
-
-                    <flux:field variant="inline">
-                        <flux:checkbox value="{{ $permission->name }}" wire:model="selectedPermissions" />
-                        <flux:label>{{ $permission->name }}</flux:label>
-                        <flux:error name="selectedPermissions" />
-                    </flux:field>
-
-                @endforeach
-            </div>
-
-            <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
-                </div>
-    
-                <x-action-message class="me-3" on="role-created">
-                    {{ __('Saved.') }}
-                </x-action-message>
-            </div>
-        </form>
     </div>
+
+
+
+    <form wire:submit.prevent="createRole">
+
+
+        <div class="flex gap-5 mb-8">
+
+            <flux:input
+
+                wire:model="name"
+
+                :label="__('Name')"
+
+                type="text"
+
+                required
+
+                placeholder="Role name"
+
+            />
+
+        </div>
+
+
+
+
+        <div class="mb-6">
+
+            <h2 class="text-xl font-semibold">
+                Permissions
+            </h2>
+
+            <p class="text-sm text-gray-400 mt-2">
+                Select the permissions this role should have.
+                Permissions control what users can view, create, edit, or delete.
+            </p>
+
+        </div>
+
+
+
+
+        <div class="space-y-6 mb-8">
+
+
+            @foreach ($groupedPermissions as $group => $permissions)
+
+
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+
+
+                    <div class="flex justify-between items-center mb-5">
+
+
+                        <h3 class="text-lg font-semibold capitalize">
+                            {{ $group }}
+                        </h3>
+
+
+                        <button
+
+                            type="button"
+
+                            wire:click="selectAllPermissions('{{ $group }}')"
+
+                            class="text-sm text-purple-400"
+
+                        >
+                            Select All
+                        </button>
+
+
+                    </div>
+
+
+
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+
+                        @foreach ($permissions as $permission)
+
+
+                            <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-800 hover:border-purple-500 cursor-pointer">
+
+
+                                <flux:checkbox
+
+                                    value="{{ $permission['name'] }}"
+
+                                    wire:model="selectedPermissions"
+
+                                />
+
+
+                                <flux:label>
+
+                                    {{ ucwords(str_replace('-', ' ', $permission['name'])) }}
+
+                                </flux:label>
+
+
+                            </label>
+
+
+                        @endforeach
+
+
+                    </div>
+
+
+                </div>
+
+
+            @endforeach
+
+
+        </div>
+
+
+
+
+        <flux:error name="selectedPermissions" />
+
+
+
+        <div class="flex items-center gap-4">
+
+
+            <flux:button variant="primary" type="submit">
+
+                Save
+
+            </flux:button>
+
+
+
+            <x-action-message on="role-created">
+
+                Saved.
+
+            </x-action-message>
+
+
+        </div>
+
+
+    </form>
+
+
+</div>
