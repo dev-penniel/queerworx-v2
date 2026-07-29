@@ -18,27 +18,51 @@ class PermissionSeeder extends Seeder
         // Create permissions
 
         $permissions = [
-            // 'article-list',
-            // 'article-create',
-            // 'article-edit',
-            // 'article-delete',
-            // 'article-view',
-            // 'category-list',
-            // 'category-create',
-            // 'category-edit',
-            // 'category-delete',
-            // 'role-list',
-            // 'role-create',
-            // 'role-edit',
-            // 'role-delete',
-            // 'product-list',
-            // 'product-create',
-            // 'product-edit',
-            // 'product-delete',
-            // 'user-list',
-            // 'user-create',
-            // 'user-edit',
-            // 'user-delete',
+            'article-list',
+            'article-create',
+            'article-edit',
+            'article-delete',
+            'article-view',
+            'category-list',
+            'category-create',
+            'category-edit',
+            'category-delete',
+            'role-list',
+            'role-create',
+            'role-edit',
+            'role-delete',
+            'adverts-list',
+            'adverts-create',
+            'adverts-edit',
+            'adverts-delete',
+            'subscribers-list',
+            'subscribers-create',
+            'subscribers-edit',
+            'subscribers-delete',
+            'user-list',
+            'user-create',
+            'user-edit',
+            'user-delete',
+            'resources-list',
+            'resources-create',
+            'resources-edit',
+            'resources-delete',
+            'policies-list',
+            'policies-create',
+            'policies-edit',
+            'policies-delete',
+            'team-list',
+            'team-create',
+            'team-edit',
+            'team-delete',
+            'join-us-edit',
+            'support-edit',
+            'programs-list',
+            'programs-create',
+            'programs-edit',
+            'programs-delete',
+            'comments-list',
+            'comments-reply',
         ];
 
         foreach($permissions as $key => $permission)
@@ -48,7 +72,7 @@ class PermissionSeeder extends Seeder
         
         // create roles and assighn permisisons
          $role = Role::create(['name' => 'General Admin']);
-        // $role->givePermissionTo(Permission::all());
+        $role->givePermissionTo(Permission::all());
 
     }
 

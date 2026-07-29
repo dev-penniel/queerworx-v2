@@ -107,26 +107,60 @@
 
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
 
-                    <flux:navlist.item icon="newspaper" :href="route('articles.index')" :current="request()->routeIs('articles.index')" wire:navigate>{{ __('Articles') }}</flux:navlist.item>
-                    <flux:navlist.item icon="chat-bubble-left-right" :href="route('comments.index')" :current="request()->routeIs('comments.index')" wire:navigate>{{ __('Comments') }}</flux:navlist.item>
 
-                    <flux:navlist.item icon="clipboard-document-list" :href="route('categories.index')" :current="request()->routeIs('categories.index')" wire:navigate>{{ __('Categories') }}</flux:navlist.item>
+                    @can('article-list')
+                        <flux:navlist.item icon="newspaper" :href="route('articles.index')" :current="request()->routeIs('articles.index')" wire:navigate>{{ __('Articles') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="archive-box" :href="route('resources.index')" :current="request()->routeIs('resources.index')" wire:navigate>{{ __('Resources') }}</flux:navlist.item>
+                    @can('comments-list')
+                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('comments.index')" :current="request()->routeIs('comments.index')" wire:navigate>{{ __('Comments') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="document-text" :href="route('admin.documents')" :current="request()->routeIs('admin.documents')" wire:navigate>{{ __('Policies & Financials') }}</flux:navlist.item>
+                    @can('category-list')
+                        <flux:navlist.item icon="clipboard-document-list" :href="route('categories.index')" :current="request()->routeIs('categories.index')" wire:navigate>{{ __('Categories') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="identification" :href="route('admin.team-members')" :current="request()->routeIs('admin.team-members')" wire:navigate>{{ __('Team Members') }}</flux:navlist.item>
+                    @can('resources-list')
+                        <flux:navlist.item icon="archive-box" :href="route('resources.index')" :current="request()->routeIs('resources.index')" wire:navigate>{{ __('Resources') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="user-group" :href="route('admin.join-us')" :current="request()->routeIs('admin.join-us')" wire:navigate>{{ __('Join Us Page') }}</flux:navlist.item>
+                    @can('policies-list')
+                        <flux:navlist.item icon="document-text" :href="route('admin.documents')" :current="request()->routeIs('admin.documents')" wire:navigate>{{ __('Policies') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="radio" :href="route('admin.support')" :current="request()->routeIs('admin.support')" wire:navigate>{{ __('Support Page') }}</flux:navlist.item>
+                    @can('team-list')
+                        <flux:navlist.item icon="identification" :href="route('admin.team-members')" :current="request()->routeIs('admin.team-members')" wire:navigate>{{ __('Team Members') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="squares-2x2" :href="route('admin.programs')" :current="request()->routeIs('admin.programs')" wire:navigate>{{ __('Programs') }}</flux:navlist.item>
+                    @can('join-us-edit')
+                        <flux:navlist.item icon="user-group" :href="route('admin.join-us')" :current="request()->routeIs('admin.join-us')" wire:navigate>{{ __('Join Us Page') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="user-group" :href="route('subscribers.index')" :current="request()->routeIs('subscribers.index')" wire:navigate>{{ __('Subscribers') }}</flux:navlist.item>
+                    @can('support-edit')
+                        <flux:navlist.item icon="radio" :href="route('admin.support')" :current="request()->routeIs('admin.support')" wire:navigate>{{ __('Support Page') }}</flux:navlist.item>
+                        
+                    @endcan
 
-                    <flux:navlist.item icon="radio" :href="route('adverts.index')" :current="request()->routeIs('adverts.index')" wire:navigate>{{ __('Adverts') }}</flux:navlist.item>
+                    @can('programs-list')
+                        <flux:navlist.item icon="squares-2x2" :href="route('admin.programs')" :current="request()->routeIs('admin.programs')" wire:navigate>{{ __('Programs') }}</flux:navlist.item>
+                    @endcan
+                    
+                    @can('subscribers-list')
+                        <flux:navlist.item icon="user-group" :href="route('subscribers.index')" :current="request()->routeIs('subscribers.index')" wire:navigate>{{ __('Subscribers') }}</flux:navlist.item>
+                        
+                    @endcan
+
+                    @can('adverts-list')
+                        <flux:navlist.item icon="radio" :href="route('adverts.index')" :current="request()->routeIs('adverts.index')" wire:navigate>{{ __('Adverts') }}</flux:navlist.item>
+                        
+                    @endcan
 
 
                     

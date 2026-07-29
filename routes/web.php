@@ -104,3 +104,4 @@ Route::middleware(['auth', 'permission:role-list'])->group(function(){
 });
 
 require __DIR__.'/auth.php';
+
