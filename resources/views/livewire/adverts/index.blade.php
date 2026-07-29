@@ -278,7 +278,7 @@ new class extends Component {
                         @if ($thumbnail == null && $currentThumbnail !== null)
                             <div class="mt-2">
                                 <span class="block text-sm font-medium text-gray-700 mb-1">Current Cover Image:</span>
-                                <img src="{{ route('media.show', ['path' => $currentThumbnail]) }}" class="h-40 w-full object-cover rounded-md">
+                                {{-- <img src="{{ route('media.show', ['path' => $currentThumbnail]) }}" class="h-40 w-full object-cover rounded-md"> --}}
                                 <button type="button" wire:click="removeCoverImage" 
                                         class="mt-2 text-sm text-red-600 hover:text-red-800 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,9 +335,12 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            <flux:modal.trigger name="create-advert">
-                <flux:button class="cursor-pointer">Add advert</flux:button>
-            </flux:modal.trigger>
+            @can('adverts-create')
+                <flux:modal.trigger name="create-advert">
+                    <flux:button class="cursor-pointer">Add advert</flux:button>
+                </flux:modal.trigger>
+            @endcan
+            
 
                 
 
@@ -380,7 +383,7 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm whitespace-nowrap">
                             @if ($advert->thumbnail)
                                 <div class="mt-2">
-                                    <img src="{{ route('media.show', ['path' => $advert->thumbnail]) }}" class="h-15 w-30 object-cover rounded-md">
+                                    {{-- <img src="{{ route('media.show', ['path' => $advert->thumbnail]) }}" class="h-15 w-30 object-cover rounded-md"> --}}
                                 </div>
                             @endif
                         </td>
@@ -394,7 +397,7 @@ new class extends Component {
                             @canany(['category-edit', 'category-delete'])
                                 <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                                     
-                                        @can("category-edit")
+                                        @can("adverts-edit")
                                             <flux:modal.trigger wire:click="edit({{ $advert->id }})" name="update-advert">
                                                 <span @class([
                                                     'inline-flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
@@ -408,7 +411,7 @@ new class extends Component {
                                             </flux:modal.trigger>
                                         @endcan
 
-                                        @can("category-delete")
+                                        @can("adverts-delete")
                                             <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="delete({{ $advert->id }})" wire:confirm="Are you sure you want to delete?" />
                                             {{-- <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="$js.showAlert({{ $product->id }})" /> --}}
                                         @endcan

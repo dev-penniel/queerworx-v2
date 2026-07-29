@@ -55,7 +55,10 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
 
-            <a wire:navigate href="{{ route('articles.create') }}"><flux:button class="cursor-pointer">Add</flux:button></a>
+            @can('article-create')
+                <a wire:navigate href="{{ route('articles.create') }}"><flux:button class="cursor-pointer">Add</flux:button></a>
+                
+            @endcan
 
             <div class="w-[200px]">
                 <flux:input
@@ -111,11 +114,17 @@ new class extends Component {
 
                             <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                                 <a target="_BLANK" href="{{ route('article', ['slug' => $article->slug]) }}"><flux:icon.eye class="size-5"/></a>
-                                <a wire:navigate href="{{ route('articles.edit', $article->id) }}" class="inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]">
-                                    <flux:icon.pencil-square class="size-5" />
-                                    <span>Edit</span>
-                                </a>
-                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteArticle({{ $article->id }})" wire:confirm="Are you sure you want to delete?" />
+                                
+                                @can('article-edit')
+                                    <a wire:navigate href="{{ route('articles.edit', $article->id) }}" class="inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]">
+                                        <flux:icon.pencil-square class="size-5" />
+                                        <span>Edit</span>
+                                    </a>
+                                @endcan
+                                
+                                @can('article-delete')
+                                    <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteArticle({{ $article->id }})" wire:confirm="Are you sure you want to delete?" />
+                                @endcan
                             </td>
 
                         </tr>

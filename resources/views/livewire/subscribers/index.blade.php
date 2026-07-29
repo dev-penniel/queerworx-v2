@@ -153,7 +153,7 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            @can("category-create")
+            @can("subscribers-create")
                 <flux:modal.trigger name="create-subscriber">
                     <flux:button class="cursor-pointer">Add</flux:button>
                 </flux:modal.trigger>
@@ -208,7 +208,7 @@ new class extends Component {
                             @canany(['category-edit', 'category-delete'])
                                 <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
                                     
-                                        @can("category-edit")
+                                        @can("subscribers-edit")
                                             <flux:modal.trigger wire:click="edit({{ $subscriber->id }})" name="update-subscriber">
                                                 <span @class([
                                                     'inline-flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
@@ -222,7 +222,7 @@ new class extends Component {
                                             </flux:modal.trigger>
                                         @endcan
 
-                                        @can("category-delete")
+                                        @can("subscribers-delete")
                                             <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteSubscriber({{ $subscriber->id }})" wire:confirm="Are you sure you want to delete?" />
                                             {{-- <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="$js.showAlert({{ $product->id }})" /> --}}
                                         @endcan

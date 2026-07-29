@@ -103,9 +103,23 @@ new class extends Component {
                         <td class="px-5 py-3 text-sm whitespace-nowrap">{{ $comment->created_at->format('M d, Y H:i') }}</td>
                         <td class="px-5 py-3 text-sm">
                             <div class="flex gap-3">
-                                <button wire:click="approve({{ $comment->id }})" class="text-green-600 font-semibold">Approve</button>
-                                <button wire:click="reject({{ $comment->id }})" class="text-orange-600 font-semibold">Reject</button>
-                                <button wire:click="deleteComment({{ $comment->id }})" wire:confirm="Delete this comment?" class="text-red-600 font-semibold">Delete</button>
+
+                                @can('comments-approve')
+                                
+                                    @if ($status != 'approved')
+                                        <button wire:click="approve({{ $comment->id }})" class="text-green-600 font-semibold">Approve</button>
+                                    @endif
+                                    
+                                @endcan
+                                @can('comments-reject')
+                                    @if ($status != 'rejected')
+                                        <button wire:click="reject({{ $comment->id }})" class="text-orange-600 font-semibold">Reject</button>
+                                    @endif
+                                @endcan
+                                @can('comments-delete')
+                                    <button wire:click="deleteComment({{ $comment->id }})" wire:confirm="Delete this comment?" class="text-red-600 font-semibold">Delete</button>
+                                @endcan
+                                
                             </div>
                         </td>
                     </tr>

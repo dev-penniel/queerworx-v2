@@ -241,71 +241,77 @@ new class extends Component {
     </div>
 
     <div class="grid gap-6 xl:grid-cols-2">
-        <form wire:submit="saveProgram" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:heading size="lg">{{ $programId ? 'Edit program' : 'Create program' }}</flux:heading>
-            <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                <flux:input wire:model="programName" label="Program name" />
-                <flux:input wire:model="programSortOrder" type="number" min="0" label="Display order" />
-                <div class="sm:col-span-2">
-                    <flux:textarea wire:model="programSummary" label="Short description" rows="4" />
-                </div>
-                <div class="sm:col-span-2">
-                    <flux:textarea wire:model="programOutcomes" label="Programme outcomes" rows="4" placeholder="What this programme achieves for the community" />
-                </div>
-                <div class="sm:col-span-2">
-                    <flux:input wire:model="programCoverImage" type="file" label="Program cover image" accept="image/*" />
-                </div>
 
-                <div class="flex items-center gap-3 sm:col-span-2">
-                    <flux:button type="submit" variant="primary" class="cursor-pointer">Save Program</flux:button>
-                    @if ($programId)
-                        <flux:button type="button" wire:click="resetProgramForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
-                    @endif
-                    <x-action-message on="program-saved">{{ __('Saved.') }}</x-action-message>
-                </div>
-            </div>
-        </form>
+        @can('programs-create')
+            <form wire:submit="saveProgram" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                <flux:heading size="lg">{{ $programId ? 'Edit program' : 'Create program' }}</flux:heading>
+                <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                    <flux:input wire:model="programName" label="Program name" />
+                    <flux:input wire:model="programSortOrder" type="number" min="0" label="Display order" />
+                    <div class="sm:col-span-2">
+                        <flux:textarea wire:model="programSummary" label="Short description" rows="4" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <flux:textarea wire:model="programOutcomes" label="Programme outcomes" rows="4" placeholder="What this programme achieves for the community" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <flux:input wire:model="programCoverImage" type="file" label="Program cover image" accept="image/*" />
+                    </div>
 
-        <form wire:submit="saveActivity" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:heading size="lg">{{ $activityId ? 'Edit event' : 'Create event' }}</flux:heading>
-            <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                <flux:select wire:model="activityProgramId" label="Program">
-                    <flux:select.option value="">Choose program</flux:select.option>
-                    @foreach ($this->programs as $program)
-                        <flux:select.option value="{{ $program->id }}">{{ $program->name }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-                <flux:select wire:model="activityStatus" label="Status">
-                    <flux:select.option value="upcoming">Upcoming</flux:select.option>
-                    <flux:select.option value="ongoing">Ongoing</flux:select.option>
-                    <flux:select.option value="completed">Completed</flux:select.option>
-                </flux:select>
-                <flux:input wire:model="activityDate" type="date" label="Date" />
-                <flux:input wire:model="activityTime" type="time" label="Time" />
-                <div class="sm:col-span-2">
-                    <flux:input wire:model="activityVenue" label="Venue" />
+                    <div class="flex items-center gap-3 sm:col-span-2">
+                        <flux:button type="submit" variant="primary" class="cursor-pointer">Save Program</flux:button>
+                        @if ($programId)
+                            <flux:button type="button" wire:click="resetProgramForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
+                        @endif
+                        <x-action-message on="program-saved">{{ __('Saved.') }}</x-action-message>
+                    </div>
                 </div>
-                <div class="sm:col-span-2">
-                    <flux:input wire:model="activityTitle" label="Event title" />
-                </div>
-                <div class="sm:col-span-2">
-                    <flux:textarea wire:model="activityDescription" label="Description" rows="4" />
-                </div>
-                <flux:input wire:model="featuredImage" type="file" label="Featured image" accept="image/*" />
-                <flux:input wire:model="pdf" type="file" label="Event PDF" accept="application/pdf" />
-                <div class="sm:col-span-2">
-                    <flux:input wire:model="galleryFiles" type="file" label="Gallery photos and videos" accept="image/*,video/*" multiple />
-                </div>
+            </form>
+        @endcan
+        
+        @can('programs-create')
+            <form wire:submit="saveActivity" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                <flux:heading size="lg">{{ $activityId ? 'Edit event' : 'Create event' }}</flux:heading>
+                <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                    <flux:select wire:model="activityProgramId" label="Program">
+                        <flux:select.option value="">Choose program</flux:select.option>
+                        @foreach ($this->programs as $program)
+                            <flux:select.option value="{{ $program->id }}">{{ $program->name }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                    <flux:select wire:model="activityStatus" label="Status">
+                        <flux:select.option value="upcoming">Upcoming</flux:select.option>
+                        <flux:select.option value="ongoing">Ongoing</flux:select.option>
+                        <flux:select.option value="completed">Completed</flux:select.option>
+                    </flux:select>
+                    <flux:input wire:model="activityDate" type="date" label="Date" />
+                    <flux:input wire:model="activityTime" type="time" label="Time" />
+                    <div class="sm:col-span-2">
+                        <flux:input wire:model="activityVenue" label="Venue" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <flux:input wire:model="activityTitle" label="Event title" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <flux:textarea wire:model="activityDescription" label="Description" rows="4" />
+                    </div>
+                    <flux:input wire:model="featuredImage" type="file" label="Featured image" accept="image/*" />
+                    <flux:input wire:model="pdf" type="file" label="Event PDF" accept="application/pdf" />
+                    <div class="sm:col-span-2">
+                        <flux:input wire:model="galleryFiles" type="file" label="Gallery photos and videos" accept="image/*,video/*" multiple />
+                    </div>
 
-                <div class="flex items-center gap-3 sm:col-span-2">
-                    <flux:button type="submit" variant="primary" class="cursor-pointer">Save Event</flux:button>
-                    @if ($activityId)
-                        <flux:button type="button" wire:click="resetActivityForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
-                    @endif
-                    <x-action-message on="activity-saved">{{ __('Saved.') }}</x-action-message>
+                    <div class="flex items-center gap-3 sm:col-span-2">
+                        <flux:button type="submit" variant="primary" class="cursor-pointer">Save Event</flux:button>
+                        @if ($activityId)
+                            <flux:button type="button" wire:click="resetActivityForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
+                        @endif
+                        <x-action-message on="activity-saved">{{ __('Saved.') }}</x-action-message>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+
+        @endcan
     </div>
 
     <div class="mt-8 grid gap-6 xl:grid-cols-[360px_1fr]">
@@ -325,11 +331,16 @@ new class extends Component {
                                 <p class="mt-1 text-sm text-zinc-500">Order {{ $program->sort_order }} · {{ $program->activities_count }} events</p>
                             </div>
                             <div class="flex gap-3">
-                                <button type="button" wire:click="editProgram({{ $program->id }})" @class(['inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]', 'bg-[#14A84D] font-semibold text-white' => $programId === $program->id])>
+                                @can('programs-edit')
+                                    <button type="button" wire:click="editProgram({{ $program->id }})" @class(['inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]', 'bg-[#14A84D] font-semibold text-white' => $programId === $program->id])>
                                     <flux:icon.pencil-square class="size-5" />
                                     @if ($programId === $program->id)<span>Editing</span>@endif
                                 </button>
-                                <button type="button" wire:click="deleteProgram({{ $program->id }})" wire:confirm="Delete this program and all events?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                @endcan
+                                @can('programs-delete')
+                                    <button type="button" wire:click="deleteProgram({{ $program->id }})" wire:confirm="Delete this program and all events?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                @endcan
+                                
                             </div>
                         </div>
                     </article>
@@ -367,11 +378,16 @@ new class extends Component {
                             </td>
                             <td class="px-5 py-3 text-sm">
                                 <div class="flex gap-3">
-                                    <button type="button" wire:click="editActivity({{ $activity->id }})" @class(['inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]', 'bg-[#14A84D] font-semibold text-white' => $activityId === $activity->id])>
+                                    @can('programs-edit')
+                                        <button type="button" wire:click="editActivity({{ $activity->id }})" @class(['inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]', 'bg-[#14A84D] font-semibold text-white' => $activityId === $activity->id])>
                                         <flux:icon.pencil-square class="size-5" />
                                         @if ($activityId === $activity->id)<span>Editing</span>@endif
                                     </button>
-                                    <button type="button" wire:click="deleteActivity({{ $activity->id }})" wire:confirm="Delete this event?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                    @endcan
+                                    @can('programs-delete')
+                                        <button type="button" wire:click="deleteActivity({{ $activity->id }})" wire:confirm="Delete this event?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                        
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

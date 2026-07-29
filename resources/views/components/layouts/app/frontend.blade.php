@@ -268,7 +268,7 @@
                     Xpressions
                 </a>
                 <a href="{{ route('events') }}" class="transition py-2 hover:text-[#2563EB]">Events</a>
-                <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
+                {{-- <div class="-mt-2 ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
                     <span class="py-1 text-sm font-semibold text-gray-300">By Program</span>
                     <div class="ml-4 flex flex-col space-y-1 border-l border-white/10 pl-4">
                         @forelse ($navPrograms as $program)
@@ -279,7 +279,7 @@
                         <a href="{{ route('programs') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#149CB9]">All Programs</a>
                     </div>
                     <a href="{{ route('community') }}" class="py-1 text-sm text-gray-400 transition hover:text-[#14A84D]">Community</a>
-                </div>
+                </div> --}}
                 <a href="{{ route('support') }}" class="transition py-2 hover:text-[#7646E8]">Support</a>
                 <a href="{{ route('join-us') }}" class="bg-purple-600 hover:bg-purple-700 text-center text-white px-4 py-2 rounded-full text-sm transition mt-2">
                     Join Us

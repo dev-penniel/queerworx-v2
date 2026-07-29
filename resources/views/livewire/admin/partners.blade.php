@@ -94,31 +94,38 @@ new class extends Component {
         <flux:separator variant="subtle" />
     </div>
 
-    <div class="grid gap-6 xl:grid-cols-[360px_1fr]">
-        <form wire:submit="savePartner" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:heading size="lg">{{ $partnerId ? 'Edit partner' : 'Add partner' }}</flux:heading>
-            <flux:text class="mt-1">Add a clickable logo and website for the public Partners page.</flux:text>
+    <div @class([
+        'grid gap-6',
+        'xl:grid-cols-[360px_1fr]' => auth()->user()->can('partners-create')
+    ]) class=" ">
 
-            <div class="mt-5 space-y-4">
-                <flux:input wire:model="name" label="Partner name" />
-                <flux:input wire:model="websiteUrl" type="url" label="Website URL" placeholder="https://example.org" />
-                <flux:input wire:model="sortOrder" type="number" min="0" label="Display order" />
-                <flux:input wire:model="logo" type="file" label="Partner logo" accept="image/*" />
+        @can('partners-create')
+            <form wire:submit="savePartner" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                <flux:heading size="lg">{{ $partnerId ? 'Edit partner' : 'Add partner' }}</flux:heading>
+                <flux:text class="mt-1">Add a clickable logo and website for the public Partners page.</flux:text>
 
-                <label class="flex items-center gap-3 text-sm">
-                    <input wire:model="isActive" type="checkbox" class="rounded border-zinc-300">
-                    Active on public Partners page
-                </label>
+                <div class="mt-5 space-y-4">
+                    <flux:input wire:model="name" label="Partner name" />
+                    <flux:input wire:model="websiteUrl" type="url" label="Website URL" placeholder="https://example.org" />
+                    <flux:input wire:model="sortOrder" type="number" min="0" label="Display order" />
+                    <flux:input wire:model="logo" type="file" label="Partner logo" accept="image/*" />
 
-                <div class="flex items-center gap-3">
-                    <flux:button type="submit" variant="primary" class="cursor-pointer">Save Partner</flux:button>
-                    @if ($partnerId)
-                        <flux:button type="button" wire:click="resetForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
-                    @endif
-                    <x-action-message on="partner-saved">Saved.</x-action-message>
+                    <label class="flex items-center gap-3 text-sm">
+                        <input wire:model="isActive" type="checkbox" class="rounded border-zinc-300">
+                        Active on public Partners page
+                    </label>
+
+                    <div class="flex items-center gap-3">
+                        <flux:button type="submit" variant="primary" class="cursor-pointer">Save Partner</flux:button>
+                        @if ($partnerId)
+                            <flux:button type="button" wire:click="resetForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
+                        @endif
+                        <x-action-message on="partner-saved">Saved.</x-action-message>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        @endcan
+        
 
         <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
             <table class="w-full table-auto">
@@ -148,8 +155,13 @@ new class extends Component {
                             <td class="px-5 py-3 text-sm">{{ $partner->is_active ? 'Active' : 'Hidden' }}</td>
                             <td class="px-5 py-3 text-sm">
                                 <div class="flex gap-3">
-                                    <button type="button" wire:click="editPartner({{ $partner->id }})" class="text-[#14A84D]" title="Edit {{ $partner->name }}"><flux:icon.pencil-square class="size-5" /></button>
-                                    <button type="button" wire:click="deletePartner({{ $partner->id }})" wire:confirm="Delete this partner?" class="text-[#E61E5C]" title="Delete {{ $partner->name }}"><flux:icon.trash class="size-5" /></button>
+                                    @can('partners-edit')
+                                        <button type="button" wire:click="editPartner({{ $partner->id }})" class="text-[#14A84D]" title="Edit {{ $partner->name }}"><flux:icon.pencil-square class="size-5" /></button>
+                                    @endcan
+                                    
+                                    @can('partners-delete')
+                                        <button type="button" wire:click="deletePartner({{ $partner->id }})" wire:confirm="Delete this partner?" class="text-[#E61E5C]" title="Delete {{ $partner->name }}"><flux:icon.trash class="size-5" /></button>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

@@ -115,42 +115,49 @@ new class extends Component {
         <flux:separator variant="subtle" />
     </div>
 
-    <div class="grid gap-6 xl:grid-cols-[360px_1fr]">
-        <form wire:submit="saveMember" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:heading size="lg">{{ $memberId ? 'Edit team member' : 'Add team member' }}</flux:heading>
-            <flux:text class="mt-1">Add team, board, or Community Advisory members. Active board and advisory profiles appear in the public pyramid layout.</flux:text>
-            @if ($memberId)
-                <div class="mt-4 rounded border border-[#14A84D]/30 bg-[#14A84D]/10 px-3 py-2 text-sm font-semibold text-[#0F7A38] dark:text-[#7BE49D]">
-                    Editing: {{ $name }}
+    <div @class([
+        'grid gap-6',
+        'xl:grid-cols-[360px_1fr]' => auth()->user()->can('team-create')
+    ])>
+
+        @can('team-create')
+
+            <form wire:submit="saveMember" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                <flux:heading size="lg">{{ $memberId ? 'Edit team member' : 'Add team member' }}</flux:heading>
+                <flux:text class="mt-1">Add team, board, or Community Advisory members. Active board and advisory profiles appear in the public pyramid layout.</flux:text>
+                @if ($memberId)
+                    <div class="mt-4 rounded border border-[#14A84D]/30 bg-[#14A84D]/10 px-3 py-2 text-sm font-semibold text-[#0F7A38] dark:text-[#7BE49D]">
+                        Editing: {{ $name }}
+                    </div>
+                @endif
+
+                <div class="mt-5 space-y-4">
+                    <flux:input wire:model="name" label="Full name" />
+                    <flux:input wire:model="role" label="Job title / role" />
+                    <flux:select wire:model="memberType" label="Profile type">
+                        <flux:select.option value="team">Team member</flux:select.option>
+                        <flux:select.option value="board">Board member</flux:select.option>
+                        <flux:select.option value="advisory">Community Advisory member</flux:select.option>
+                    </flux:select>
+                    <flux:textarea wire:model="bio" label="Bio" rows="4" placeholder="Short profile for the public Team or Board page" />
+                    <flux:input wire:model="sortOrder" type="number" min="0" label="Display order" />
+                    <flux:input wire:model="photo" type="file" label="Profile picture" accept="image/*" />
+
+                    <label class="flex items-center gap-3 text-sm">
+                        <input wire:model="isActive" type="checkbox" class="rounded border-zinc-300">
+                        Active on public Team page
+                    </label>
+
+                    <div class="flex items-center gap-3">
+                        <flux:button type="submit" variant="primary" class="cursor-pointer">Save Member</flux:button>
+                        @if ($memberId)
+                            <flux:button type="button" wire:click="resetForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
+                        @endif
+                        <x-action-message on="team-member-saved">{{ __('Saved.') }}</x-action-message>
+                    </div>
                 </div>
-            @endif
-
-            <div class="mt-5 space-y-4">
-                <flux:input wire:model="name" label="Full name" />
-                <flux:input wire:model="role" label="Job title / role" />
-                <flux:select wire:model="memberType" label="Profile type">
-                    <flux:select.option value="team">Team member</flux:select.option>
-                    <flux:select.option value="board">Board member</flux:select.option>
-                    <flux:select.option value="advisory">Community Advisory member</flux:select.option>
-                </flux:select>
-                <flux:textarea wire:model="bio" label="Bio" rows="4" placeholder="Short profile for the public Team or Board page" />
-                <flux:input wire:model="sortOrder" type="number" min="0" label="Display order" />
-                <flux:input wire:model="photo" type="file" label="Profile picture" accept="image/*" />
-
-                <label class="flex items-center gap-3 text-sm">
-                    <input wire:model="isActive" type="checkbox" class="rounded border-zinc-300">
-                    Active on public Team page
-                </label>
-
-                <div class="flex items-center gap-3">
-                    <flux:button type="submit" variant="primary" class="cursor-pointer">Save Member</flux:button>
-                    @if ($memberId)
-                        <flux:button type="button" wire:click="resetForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
-                    @endif
-                    <x-action-message on="team-member-saved">{{ __('Saved.') }}</x-action-message>
-                </div>
-            </div>
-        </form>
+            </form>
+        @endcan
 
         <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
             <table class="w-full table-auto">
@@ -185,21 +192,27 @@ new class extends Component {
                             <td class="px-5 py-3 text-sm">{{ $member->is_active ? 'Active' : 'Hidden' }}</td>
                             <td class="px-5 py-3 text-sm">
                                 <div class="flex gap-3">
-                                    <button
-                                        type="button"
-                                        wire:click="editMember({{ $member->id }})"
-                                        title="Edit {{ $member->name }}"
-                                        @class([
-                                            'inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
-                                            'bg-[#14A84D] font-semibold text-white' => $memberId === $member->id,
-                                        ])
-                                    >
-                                        <flux:icon.pencil-square class="size-5" />
-                                        @if ($memberId === $member->id)
-                                            <span>Editing</span>
-                                        @endif
-                                    </button>
-                                    <button type="button" wire:click="deleteMember({{ $member->id }})" wire:confirm="Delete this team member?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                    @can('team-edit')
+                                       <button
+                                            type="button"
+                                            wire:click="editMember({{ $member->id }})"
+                                            title="Edit {{ $member->name }}"
+                                            @class([
+                                                'inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
+                                                'bg-[#14A84D] font-semibold text-white' => $memberId === $member->id,
+                                            ])
+                                        >
+                                            <flux:icon.pencil-square class="size-5" />
+                                            @if ($memberId === $member->id)
+                                                <span>Editing</span>
+                                            @endif
+                                        </button> 
+                                    @endcan
+                                    
+                                    @can('team-delete')
+                                        <button type="button" wire:click="deleteMember({{ $member->id }})" wire:confirm="Delete this team member?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                        
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

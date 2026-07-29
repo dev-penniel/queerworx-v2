@@ -98,34 +98,40 @@ new class extends Component {
         <flux:separator variant="subtle" />
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
-        <form wire:submit="save" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-            <div class="mb-5">
-                <flux:heading size="lg">{{ $editingId ? 'Edit document' : 'Upload document' }}</flux:heading>
-                <flux:text class="mt-1">PDFs appear on the About Us page.</flux:text>
-            </div>
+    <div 
+        @class(['grid gap-6 w-full',  
+        'lg:grid-cols-[360px_1fr]' => auth()->user()->can('policies-create')])>
 
-            <div class="space-y-4">
-                <flux:input wire:model="title" label="Title" placeholder="Board policy, annual statement..." />
-
-                <flux:select wire:model="type" label="Type">
-                    <flux:select.option value="policy">Policy</flux:select.option>
-                    <flux:select.option value="financial">Financial</flux:select.option>
-                </flux:select>
-
-                <flux:textarea wire:model="description" label="Description" rows="4" />
-                <flux:input wire:model="published_at" type="date" label="Published date" />
-                <flux:input wire:model="file" type="file" label="PDF file" accept="application/pdf" />
-
-                <div class="flex items-center gap-3">
-                    <flux:button type="submit" variant="primary" class="cursor-pointer">{{ $editingId ? 'Update' : 'Save' }}</flux:button>
-                    @if ($editingId)
-                        <flux:button type="button" wire:click="resetForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
-                    @endif
-                    <x-action-message on="document-saved">{{ __('Saved.') }}</x-action-message>
+        @can('policies-create')
+            <form wire:submit="save" class="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+                <div class="mb-5">
+                    <flux:heading size="lg">{{ $editingId ? 'Edit document' : 'Upload document' }}</flux:heading>
+                    <flux:text class="mt-1">PDFs appear on the About Us page.</flux:text>
                 </div>
-            </div>
-        </form>
+
+                <div class="space-y-4">
+                    <flux:input wire:model="title" label="Title" placeholder="Board policy, annual statement..." />
+
+                    <flux:select wire:model="type" label="Type">
+                        <flux:select.option value="policy">Policy</flux:select.option>
+                        <flux:select.option value="financial">Financial</flux:select.option>
+                    </flux:select>
+
+                    <flux:textarea wire:model="description" label="Description" rows="4" />
+                    <flux:input wire:model="published_at" type="date" label="Published date" />
+                    <flux:input wire:model="file" type="file" label="PDF file" accept="application/pdf" />
+
+                    <div class="flex items-center gap-3">
+                        <flux:button type="submit" variant="primary" class="cursor-pointer">{{ $editingId ? 'Update' : 'Save' }}</flux:button>
+                        @if ($editingId)
+                            <flux:button type="button" wire:click="resetForm" variant="ghost" class="cursor-pointer">Cancel</flux:button>
+                        @endif
+                        <x-action-message on="document-saved">{{ __('Saved.') }}</x-action-message>
+                    </div>
+                </div>
+            </form>
+        @endcan
+        
 
         <div>
             <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -161,20 +167,25 @@ new class extends Component {
                                 </td>
                                 <td class="px-5 py-3 text-sm">
                                     <div class="flex gap-3">
-                                        <button
-                                            type="button"
-                                            wire:click="edit({{ $document->id }})"
-                                            @class([
-                                                'inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
-                                                'bg-[#14A84D] font-semibold text-white' => $editingId === $document->id,
-                                            ])
-                                        >
-                                            <flux:icon.pencil-square class="size-5" />
-                                            @if ($editingId === $document->id)
-                                                <span>Editing</span>
-                                            @endif
-                                        </button>
-                                        <button type="button" wire:click="delete({{ $document->id }})" wire:confirm="Delete this document?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                        @can('policies-edit')
+                                            <button
+                                                type="button"
+                                                wire:click="edit({{ $document->id }})"
+                                                @class([
+                                                    'inline-flex items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
+                                                    'bg-[#14A84D] font-semibold text-white' => $editingId === $document->id,
+                                                ])
+                                            >
+                                                <flux:icon.pencil-square class="size-5" />
+                                                @if ($editingId === $document->id)
+                                                    <span>Editing</span>
+                                                @endif
+                                            </button>
+                                        @endcan
+                                        
+                                        @can('policies-delete')
+                                            <button type="button" wire:click="delete({{ $document->id }})" wire:confirm="Delete this document?" class="text-[#E61E5C]"><flux:icon.trash class="size-5" /></button>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

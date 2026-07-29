@@ -163,9 +163,12 @@ new class extends Component {
 
         <div class="flex justify-between items-center mb-5">
             
-            <flux:modal.trigger name="create-category">
-                <flux:button class="cursor-pointer">Add</flux:button>
-            </flux:modal.trigger>
+            @can('category-create')
+                <flux:modal.trigger name="create-category">
+                    <flux:button class="cursor-pointer">Add</flux:button>
+                </flux:modal.trigger>
+            @endcan
+            
 
                 
 
@@ -207,18 +210,24 @@ new class extends Component {
                         
                             
                             <td class="px-5 py-2 text-sm flex gap-2 place-content-center">
-                                <flux:modal.trigger wire:click="edit({{ $category->id }})" name="update-category">
-                                    <span @class([
-                                        'inline-flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
-                                        'bg-[#14A84D] font-semibold text-white' => $id === $category->id,
-                                    ])>
-                                        <flux:icon.pencil-square class="size-5" />
-                                        @if ($id === $category->id)
-                                            <span>Editing</span>
-                                        @endif
-                                    </span>
-                                </flux:modal.trigger>
-                                <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteCategory({{ $category->id }})" wire:confirm="Are you sure you want to delete?" />
+                                @can('category-edit')
+                                    <flux:modal.trigger wire:click="edit({{ $category->id }})" name="update-category">
+                                        <span @class([
+                                            'inline-flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-[#14A84D]',
+                                            'bg-[#14A84D] font-semibold text-white' => $id === $category->id,
+                                        ])>
+                                            <flux:icon.pencil-square class="size-5" />
+                                            @if ($id === $category->id)
+                                                <span>Editing</span>
+                                            @endif
+                                        </span>
+                                    </flux:modal.trigger>
+                                @endcan
+
+                                @can('category-delete')
+                                    <flux:icon.trash class="size-5 cursor-pointer" color="red" wire:click="deleteCategory({{ $category->id }})" wire:confirm="Are you sure you want to delete?" />
+                                @endcan
+                                
                             </td>
                         
                     </tr>
