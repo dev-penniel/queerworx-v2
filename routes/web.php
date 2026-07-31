@@ -80,7 +80,7 @@ Route::middleware(['auth'])->group(function(){
      
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:article-list'])->group(function(){
 
     Volt::route('articles/index', 'articles.index')->name('articles.index');
     Volt::route('articles/create', 'articles.create')->name('articles.create');
