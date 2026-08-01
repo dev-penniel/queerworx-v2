@@ -39,34 +39,44 @@
                     <a wire:navigate href="{{ route('about') }}" class="inline-flex items-center gap-2 rounded border border-white/25 px-4 py-2 text-sm font-semibold text-white">
                         <flux:icon.eye class="size-4" /> About Page
                     </a>
-                    <a wire:navigate href="{{ route('admin.documents') }}" class="inline-flex items-center gap-2 rounded bg-[#14A84D] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0f7a38]">
-                        <flux:icon.document-arrow-up class="size-4" /> Upload PDF
-                    </a>
-                    <a wire:navigate href="{{ route('admin.programs') }}" class="inline-flex items-center gap-2 rounded border border-white/25 px-4 py-2 text-sm font-semibold text-white">
-                        <flux:icon.squares-2x2 class="size-4" /> Add Activity
-                    </a>
+
+                    @can('policies-create')
+                        <a wire:navigate href="{{ route('admin.documents') }}" class="inline-flex items-center gap-2 rounded bg-[#14A84D] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0f7a38]">
+                            <flux:icon.document-arrow-up class="size-4" /> Upload PDF
+                        </a>
+                    @endcan
+                    
+                    @can('programs-create')
+                        <a wire:navigate href="{{ route('admin.programs') }}" class="inline-flex items-center gap-2 rounded border border-white/25 px-4 py-2 text-sm font-semibold text-white">
+                            <flux:icon.squares-2x2 class="size-4" /> Add Activity
+                        </a>
+                    @endcan
+                    
                 </div>
             </div>
 
             <div class="mt-6 h-1 rounded bg-[linear-gradient(90deg,#E61E5C_0%,#F05A12_18%,#FFD83D_34%,#14A84D_52%,#149CB9_72%,#7646E8_100%)]"></div>
         </section>
 
-        @if ($reviewTotal > 0)
-            <section class="rounded-lg border border-[#FFD83D]/30 bg-[#FFD83D]/10 p-5">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div>
-                        <h2 class="text-xl font-bold text-[#FFD83D]">Review queue needs attention</h2>
-                        <p class="mt-1 text-sm text-white/70">
-                            {{ $pendingArticles }} article{{ $pendingArticles === 1 ? '' : 's' }} and {{ $pendingComments }} comment{{ $pendingComments === 1 ? '' : 's' }} waiting for approval.
-                        </p>
+        @can('comments-list')
+            @if ($reviewTotal > 0)
+                <section class="rounded-lg border border-[#FFD83D]/30 bg-[#FFD83D]/10 p-5">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-[#FFD83D]">Review queue needs attention</h2>
+                            <p class="mt-1 text-sm text-white/70">
+                                {{ $pendingArticles }} article{{ $pendingArticles === 1 ? '' : 's' }} and {{ $pendingComments }} comment{{ $pendingComments === 1 ? '' : 's' }} waiting for approval.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <a wire:navigate href="{{ route('articles.index') }}" class="rounded bg-[#14A84D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#0f7a38]">Review Articles</a>
+                            <a wire:navigate href="{{ route('comments.index') }}" class="rounded border border-[#14A84D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#14A84D]">Review Comments</a>
+                        </div>
                     </div>
-                    <div class="flex flex-wrap gap-3">
-                        <a wire:navigate href="{{ route('articles.index') }}" class="rounded bg-[#14A84D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#0f7a38]">Review Articles</a>
-                        <a wire:navigate href="{{ route('comments.index') }}" class="rounded border border-[#14A84D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#14A84D]">Review Comments</a>
-                    </div>
-                </div>
-            </section>
-        @endif
+                </section>
+            @endif
+        @endcan
+        
 
         <section class="grid gap-4 md:grid-cols-4">
             @foreach ($stats as $stat)
@@ -82,7 +92,11 @@
             <div class="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-sm">
                 <div class="mb-4 flex items-center justify-between">
                     <flux:heading size="lg">Program activity overview</flux:heading>
-                    <a wire:navigate href="{{ route('admin.programs') }}" class="text-sm font-semibold text-[#7DD3FC]">Manage</a>
+
+                    @can('programs-list')
+                        <a wire:navigate href="{{ route('admin.programs') }}" class="text-sm font-semibold text-[#7DD3FC]">Manage</a>
+                    @endcan
+                    
                 </div>
 
                 <div class="grid gap-3 sm:grid-cols-2">
@@ -103,18 +117,31 @@
                 <flux:heading size="lg">Quick controls</flux:heading>
 
                 <div class="mt-4 space-y-3">
-                    <a wire:navigate href="{{ route('articles.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
-                        Articles <span>{{ Article::count() }}</span>
-                    </a>
-                    <a wire:navigate href="{{ route('comments.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
-                        Pending comments <span>{{ $pendingComments }}</span>
-                    </a>
-                    <a wire:navigate href="{{ route('resources.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
-                        Resources <span>Manage</span>
-                    </a>
-                    <a wire:navigate href="{{ route('subscribers.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
-                        Subscribers <span>{{ Subscriber::count() }}</span>
-                    </a>
+
+                    @can('articles-create')
+                        <a wire:navigate href="{{ route('articles.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
+                            Articles <span>{{ Article::count() }}</span>
+                        </a>
+                    @endcan
+                    
+                    @can('comments-list')
+                        <a wire:navigate href="{{ route('comments.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
+                            Pending comments <span>{{ $pendingComments }}</span>
+                        </a>
+                    @endcan
+                    
+                    @can('resources-list')
+                        <a wire:navigate href="{{ route('resources.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
+                            Resources <span>Manage</span>
+                        </a>
+                    @endcan
+                    
+                    @can('subscribers-list')
+                        <a wire:navigate href="{{ route('subscribers.index') }}" class="flex items-center justify-between rounded border border-white/10 bg-black/20 px-4 py-3 text-sm">
+                            Subscribers <span>{{ Subscriber::count() }}</span>
+                        </a>
+                    @endcan
+                    
                 </div>
             </div>
         </section>
