@@ -24,6 +24,7 @@ Volt::route('board', 'board')->name('board');
 Volt::route('about', 'about')->name('about');
 Volt::route('partners', 'partners')->name('partners');
 
+
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

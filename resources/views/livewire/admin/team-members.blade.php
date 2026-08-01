@@ -180,7 +180,7 @@ new class extends Component {
                         ])>
                             <td class="px-5 py-3 text-sm">
                                 @if ($member->photo_path)
-                                    <img src="{{ route('media.show', ['path' => $member->photo_path]) }}" alt="{{ $member->name }}" class="h-7 w-7 rounded-full object-cover">
+                                    <img src="{{ Storage::url($member->photo_path) }}" class="h-15 w-30 object-cover rounded-md">
                                 @else
                                     <span class="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 text-[9px] font-bold text-zinc-600">No img</span>
                                 @endif

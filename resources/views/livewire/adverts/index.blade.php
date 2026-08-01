@@ -383,7 +383,7 @@ new class extends Component {
                         <td class="px-5 py-2 text-sm whitespace-nowrap">
                             @if ($advert->thumbnail)
                                 <div class="mt-2">
-                                    {{-- <img src="{{ route('media.show', ['path' => $advert->thumbnail]) }}" class="h-15 w-30 object-cover rounded-md"> --}}
+                                    <img src="{{ Storage::url($advert->thumbnail) }}" class="h-15 w-30 object-cover rounded-md">
                                 </div>
                             @endif
                         </td>
