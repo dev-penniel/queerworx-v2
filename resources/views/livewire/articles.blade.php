@@ -187,7 +187,7 @@ class extends Component {
                                         @if ($advert->video_path)
                                             <video src="{{ route('media.show', ['path' => $advert->video_path]) }}" class="max-h-[210px] w-full object-contain" autoplay muted loop playsinline></video>
                                         @elseif ($advert->thumbnail)
-                                            <img src="{{ route('media.show', ['path' => $advert->thumbnail]) }}" alt="{{ $advert->title }}" class="max-h-[210px] w-full object-contain">
+                                            <img src="{{ Storage::url($advert->thumbnail) }}" class="h-15 w-30 object-cover rounded-md">
                                         @else
                                             <span class="text-center font-bold text-[#7646e8]">{{ $advert->title }}</span>
                                         @endif
