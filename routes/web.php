@@ -46,38 +46,69 @@ Route::middleware(['auth'])->group(function(){
 
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:category-list'])->group(function(){
 
     Volt::route('categories/index', 'categories.index')->name('categories.index');
      
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:resources-list'])->group(function(){
 
     Volt::route('resources/index', 'resources.index')->name('resources.index');
      
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:policies-list'])->group(function(){
 
     Volt::route('admin/documents', 'admin.documents')->name('admin.documents');
+     
+});
+
+Route::middleware(['auth', 'permission:programs-list'])->group(function(){
+
     Volt::route('admin/programs', 'admin.programs')->name('admin.programs');
+     
+});
+
+Route::middleware(['auth', 'permission:team-list'])->group(function(){
+
     Volt::route('admin/team-members', 'admin.team-members')->name('admin.team-members');
+     
+});
+
+Route::middleware(['auth', 'permission:join-us-edit'])->group(function(){
+
     Volt::route('admin/join-us', 'admin.join-us')->name('admin.join-us');
+     
+});
+
+Route::middleware(['auth', 'permission:support-edit'])->group(function(){
+
     Volt::route('admin/support', 'admin.support')->name('admin.support');
+     
+});
+
+Route::middleware(['auth', 'permission:partners-list'])->group(function(){
+
     Volt::route('admin/partners', 'admin.partners')->name('admin.partners');
      
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:adverts-list'])->group(function(){
 
     Volt::route('adverts/index', 'adverts.index')->name('adverts.index');
      
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth', 'permission:subscribers-list'])->group(function(){
 
     Volt::route('subscribers/index', 'subscribers.index')->name('subscribers.index');
+     
+});
+
+Route::middleware(['auth', 'permission:comments-list'])->group(function(){
+
+    Volt::route('comments/index', 'comments.index')->name('comments.index');
      
 });
 
@@ -85,9 +116,7 @@ Route::middleware(['auth', 'permission:article-list'])->group(function(){
 
     Volt::route('articles/index', 'articles.index')->name('articles.index');
     Volt::route('articles/create', 'articles.create')->name('articles.create');
-    Volt::route('articles/{id}/edit', 'articles.edit')->name('articles.edit');
-    Volt::route('comments/index', 'comments.index')->name('comments.index');
-     
+    Volt::route('articles/{id}/edit', 'articles.edit')->name('articles.edit'); 
 });
 
 Route::middleware(['auth', 'permission:user-list'])->group(function(){
